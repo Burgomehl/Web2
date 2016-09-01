@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head><title>Web Socket "Hello World"</title></head>
+	
+	<body>
+		<div>
+			<input type="text" id="userinput" />
+			<br>
+			<input type="submit" value="Send message to server" onClick="start()" />
+		</div>
+		<div id="messages">
+			
+		</div>
+		
+		<script type="text/javascript">
+			var webSocket = new WebSocket(
+				'ws://localhost:8080/WebProg2/websocket'
+			);
+			webSocket.onerror = function(event){
+				onError(event)
+			};
+			
+			webSocket.onopen = function(event){
+				onOpen(event)
+			};
+			
+			webSocket.onmessage = function(event){
+				onMessage(event)
+			};
+			
+			function onOpen(event){
+				document.getElementById('messages').innerHTML = 'Now Connection established';
+			}
+			
+			function onError(event){
+				alert(event.data);
+			}
+			
+			function onMessage(event){
+				document.getElementById('messages').innerHTML += '<br//>' + event.data;
+			}
+			
+			function start(){
+				var text = document.getElementById("userinput").value;
+				
+				webSocket.send(text);
+				return false;
+			}
+		</script>
+	</body>
+
+</html>

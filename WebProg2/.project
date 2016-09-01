@@ -33,4 +33,17 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>PROJECT_WEBPROG2</name>
+			<type>2</type>
+			<locationURI>PROJECT_WEBPROG2</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>PROJECT_WEBPROG2</name>
+			<value>file:/C:/Users/Gabriel%20Meyer/Desktop/apache-tomcat-9.0.0.M4/webapps</value>
+		</variable>
+	</variableList>
 </projectDescription>

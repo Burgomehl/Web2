@@ -8,5 +8,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="lib" path="C:/Users/Gabriel Meyer/Desktop/apache-tomcat-9.0.0.M4/lib/websocket-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Gabriel Meyer/Desktop/apache-tomcat-8.0.33/lib/websocket-api.jar"/>
+	<classpathentry kind="output" path="build"/>
 </classpath>
