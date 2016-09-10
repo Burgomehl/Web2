@@ -9,3 +9,6 @@
 Canvas:active{
 	cursor:crosshair;
 }
+.scroll{
+	overflow:scroll;
+}

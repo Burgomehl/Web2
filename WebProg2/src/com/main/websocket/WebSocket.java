@@ -1,7 +1,12 @@
 package com.main.websocket;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.websocket.CloseReason;
+import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -14,9 +19,11 @@ import com.main.messages.Message;
 import com.main.model.History;
 
 
+
 @ServerEndpoint(value="/websocket", encoders = {Encoder.class}, decoders = {Decoder.class})
 public class WebSocket {
 	private History history;
+	private static Set <Session> session = Collections.synchronizedSet(new HashSet<>());
 
 	@OnMessage
 	public void onMessage(Message message, Session session) throws IOException, InterruptedException {
@@ -30,7 +37,7 @@ public class WebSocket {
 			break;
 		case HISTORY:
 			history.addHistory(message);
-			System.out.println("Rectangle "+ message.getContent());
+			System.out.println(message.getContent());
 			break;
 		default:
 			System.out.println("hm");
@@ -39,13 +46,15 @@ public class WebSocket {
 	}
 
 	@OnOpen
-	public void onOpen() {
+	public void onOpen(Session session, EndpointConfig endpointConfig) {
+		this.session.add(session);
 		history = new History();
 		System.out.println("Connection opened.");
 	}
 
 	@OnClose
-	public void onClose() {
+	public void onClose(Session session, CloseReason closeReason) {
+		this.session.remove(session);
 		System.out.println("Connection closed.");
 	}
 }
