@@ -2,7 +2,6 @@ package com.main.websocket;
 
 import java.io.IOException;
 
-import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
