@@ -6,6 +6,10 @@
 	background-color:red;
 	border: 4px solid #666;
 }
+.active{
+	background-color:red;
+	border: 4px solid #666;
+}
 Canvas:active{
 	cursor:crosshair;
 }
