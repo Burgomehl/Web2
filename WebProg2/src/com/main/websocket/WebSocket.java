@@ -25,7 +25,6 @@ public class WebSocket {
 	private static Set<Session> session = Collections.synchronizedSet(new HashSet<>());
 
 	public WebSocket() {
-		System.out.println("History is empty");
 		history = History.getInstance();
 	}
 	

@@ -1,7 +1,10 @@
 package com.main.messages;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.codehaus.jackson.JsonNode;
 
+@XmlRootElement
 public class Message {
 
 	private Type type;

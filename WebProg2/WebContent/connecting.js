@@ -24,7 +24,6 @@ function onMessage(event) {
 	var obj = JSON.parse(event.data);
 	console.log(obj.type);
 	if(obj.type == "HISTORY"){
-		console.log("Got History Object");
 		createHistoryObject(obj.content);
 	}else{
 		sendMessageToMessageBox(event.data);
