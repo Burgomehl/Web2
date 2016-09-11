@@ -17,7 +17,7 @@ function drawCanvas() {
 	var canvas = document.getElementById('testcanvas1');
 	var context = canvas.getContext('2d');
 	document.getElementById("clear").addEventListener('click', function() {
-		context.clearRect(0, 0, canvas.width, canvas.height);
+		console.log("Use deleteHistory");
 	}, false);
 	document.getElementById("deleteHistory").addEventListener('click', function() {
 		context.clearRect(0, 0, canvas.width, canvas.height);
@@ -87,6 +87,7 @@ function drawCanvas() {
 					type : "RECTANGLE",
 					content : {
 						name: name,
+						color: color,
 						x: x,
 						y: y,
 						a: a,
@@ -109,6 +110,7 @@ function drawCanvas() {
 					type : "ELLIPSE",
 					content : {
 						name: name,
+						color: color,
 						x: x,
 						y: y,
 						rad: rad
@@ -126,11 +128,11 @@ function drawCanvas() {
 function drawObject(obj){
 	var canvas = document.getElementById('testcanvas1');
 	var context = canvas.getContext('2d');
-	context.fillStyle = color;
-	context.strokeStyle = color;
-	context.beginPath();
 	console.log(JSON.stringify(obj));
 	var obj2 = obj.content;
+	context.fillStyle = obj2.color;
+	context.strokeStyle = obj2.color;
+	context.beginPath();
 	switch(obj.type){
 	case "RECTANGLE":
 		context.rect(obj2.a, obj2.b, obj2.x - obj2.a, obj2.y - obj2.b);
