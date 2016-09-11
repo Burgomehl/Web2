@@ -63,6 +63,8 @@
                                     context.rect(a,b,x-a,y-b);
                                     active = false;
                                     var text= "a "+a+" b "+b+" x-a "+(x-a)+" y-b "+(y-b);
+                                    var name = document.getElementById("name").textContent;
+                                    text = name+":"+text;
                                     var content = {
                     						type : "RECTANGLE",
                     						content : text
@@ -74,6 +76,8 @@
                                     context.arc(x, y, Math.sqrt((x-a)*(x-a)+(y-b)*(y-b)), 0, 2* Math.PI, true);
                                     active = false;
                                     var text= "x, y, Math.sqrt((x-a)*(x-a)+(y-b)*(y-b)) x:"+x+" y:"+y+"a und b: "+a+"/"+b;
+                                    var name = document.getElementById("name").textContent;
+                                    text = name+":"+text;
                                     var content = {
                     						type : "ELLIPSE",
                     						content : text

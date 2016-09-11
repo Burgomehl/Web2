@@ -27,7 +27,7 @@ public class WebSocket {
 	public WebSocket() {
 		history = History.getInstance();
 	}
-	
+
 	@OnMessage
 	public void onMessage(Message message, Session session) throws IOException, InterruptedException {
 
@@ -40,12 +40,20 @@ public class WebSocket {
 				} catch (EncodeException e) {
 					e.printStackTrace();
 				}
-				
 			}
 			break;
 		case HISTORY:
 			history.addHistory(message);
 			System.out.println(message.getContent());
+			for (Session sessions : this.session) {
+				if (!session.equals(sessions)) {
+					try {
+						sessions.getBasicRemote().sendObject(message);
+					} catch (EncodeException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 			break;
 		default:
 			System.out.println("hm");
