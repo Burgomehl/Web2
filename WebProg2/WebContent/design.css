@@ -16,3 +16,16 @@ Canvas:active{
 .scroll{
 	overflow:scroll;
 }
+.start{
+	position: absolute;
+	background-color:grey;
+	left: 9px; 
+	top: 9px;
+	width: 1400px;
+	height: 1200px;
+	visibility: visible;
+}
+.normal{
+	background-color:white;
+	
+}

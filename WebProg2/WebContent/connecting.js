@@ -21,12 +21,13 @@ function onError(event) {
 }
 
 function onMessage(event) {
+	console.log(event.data);
 	var obj = JSON.parse(event.data);
 	console.log(obj.type);
 	if(obj.type == "HISTORY"){
 		createHistoryObject(obj.content);
 	}else{
-		sendMessageToMessageBox(event.data);
+		sendMessageToMessageBox(obj.content);
 	}
 }
 
@@ -37,11 +38,8 @@ function sendMessageToMessageBox(string) {
 
 function start() {
 	var text = document.getElementById("userinput").value;
-
-	var content = {
-		type : "TEXT",
-		content : text
-	};
+	var name = document.getElementById("name").textContent;
+	content = name+":"+text;
 	sendJSONBack("TEXT", content);
 	return false;
 }
@@ -76,4 +74,11 @@ function sendJSONBack(type, content) {
 		content : content
 	};
 	webSocket.send(JSON.stringify(cont));
+}
+
+function saveUsername(){
+	var username = document.getElementById("username").value;
+	var userNode = document.createTextNode(username);
+	document.getElementById("name").appendChild(userNode);
+	document.getElementById("start").style.visibility = "hidden";
 }

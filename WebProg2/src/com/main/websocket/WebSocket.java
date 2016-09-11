@@ -34,9 +34,14 @@ public class WebSocket {
 		switch (message.getType()) {
 		case TEXT:
 			System.out.println("User input: " + message.getContent());
-			session.getBasicRemote().sendText("Hello World Mr. " + message.getContent());
-
-			session.getBasicRemote().sendText("Hello " + message.getContent() + " to the World of this web");
+			for (Session sessions : this.session) {
+				try {
+					sessions.getBasicRemote().sendObject(message);
+				} catch (EncodeException e) {
+					e.printStackTrace();
+				}
+				
+			}
 			break;
 		case HISTORY:
 			history.addHistory(message);
@@ -52,7 +57,6 @@ public class WebSocket {
 	public void onOpen(Session session, EndpointConfig endpointConfig) {
 		this.session.add(session);
 		if (history != null) {
-			System.out.println("found History");
 			for (Session sessions : this.session) {
 				for (Message hist : history.getHistory()) {
 					try {
