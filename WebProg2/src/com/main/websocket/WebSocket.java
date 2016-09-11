@@ -55,6 +55,18 @@ public class WebSocket {
 				}
 			}
 			break;
+		case DELETE:
+			history.deleteHistory();
+			for (Session sessions : this.session) {
+				for (Message hist : history.getHistory()) {
+					try {
+						sessions.getBasicRemote().sendObject(hist);
+					} catch (IOException | EncodeException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			break;
 		default:
 			System.out.println("hm");
 			break;

@@ -25,7 +25,8 @@ function onMessage(event) {
 	var obj = JSON.parse(event.data);
 	console.log(obj.type);
 	if(obj.type == "HISTORY"){
-		createHistoryObject(obj.content.content+":"+obj.content.type);
+		createHistoryObject(JSON.stringify(obj.content.content)+":"+obj.content.type);
+		drawObject(obj.content);
 	}else{
 		sendMessageToMessageBox(obj.content);
 	}
@@ -67,7 +68,7 @@ function createHistoryObject(content){
 
 function sendJSONBack(type, content) {
 	if (type == "HISTORY") {
-		createHistoryObject(content.content+":"+content.type);
+		createHistoryObject(JSON.stringify(content.content)+":"+content.type);
 	}
 	var cont = {
 		type : type,

@@ -8,7 +8,6 @@ import com.main.messages.Message;
 public class History {
 	private static History historyObject;
 	private History(){
-		
 	}
 	
 	public static History getInstance(){
@@ -25,5 +24,9 @@ public class History {
 	
 	public List<Message> getHistory(){
 		return history;
+	}
+	
+	public void deleteHistory(){
+		history = new ArrayList<>();
 	}
 }
