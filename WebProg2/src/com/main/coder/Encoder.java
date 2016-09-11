@@ -1,14 +1,18 @@
 package com.main.coder;
 
+import java.io.IOException;
+
 import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
+
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.gson.Gson;
 import com.main.messages.Message;
 
 public class Encoder implements javax.websocket.Encoder.Text<Message> {
 	
-	private Gson gson;
+	private ObjectMapper objMapper;
 
 	@Override
 	public void destroy() {
@@ -18,12 +22,16 @@ public class Encoder implements javax.websocket.Encoder.Text<Message> {
 
 	@Override
 	public void init(EndpointConfig arg0) {
-		gson = new Gson();
+		objMapper = new ObjectMapper();
 	}
 
 	@Override
 	public String encode(Message s) throws EncodeException {
-		return gson.toJson(s);
+		try {
+			return objMapper.writeValueAsString(s);
+		} catch (IOException e) {
+			throw new EncodeException(s, e.getMessage());
+		}
 	}
 
 }

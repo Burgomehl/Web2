@@ -21,7 +21,14 @@ function onError(event) {
 }
 
 function onMessage(event) {
-	sendMessageToMessageBox(event.data);
+	var obj = JSON.parse(event.data);
+	console.log(obj.type);
+	if(obj.type == "HISTORY"){
+		console.log("Got History Object");
+		createHistoryObject(obj.content);
+	}else{
+		sendMessageToMessageBox(event.data);
+	}
 }
 
 function sendMessageToMessageBox(string) {
@@ -52,14 +59,18 @@ function changeAtt(e) {
 	}
 }
 
+function createHistoryObject(content){
+	var div = document.createElement("div");
+	div.setAttribute("onclick", "changeAtt(this)");
+	div.setAttribute("class", "history inActive");
+	var text = JSON.stringify(content);
+	div.appendChild(document.createTextNode(text));
+	document.getElementById("log").appendChild(div);
+}
+
 function sendJSONBack(type, content) {
 	if (type == "HISTORY") {
-		var div = document.createElement("div");
-		div.setAttribute("onclick", "changeAtt(this)");
-		div.setAttribute("class", "history inActive");
-		var text = JSON.stringify(content);
-		div.appendChild(document.createTextNode(text));
-		document.getElementById("log").appendChild(div);
+		createHistoryObject(content);
 	}
 	var cont = {
 		type : type,
