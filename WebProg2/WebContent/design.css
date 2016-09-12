@@ -1,31 +1,124 @@
-.history{
-	background-color:yellow;
+.history {
+	background-color: yellow;
 	border: 1px solid #666;
 }
-.history:hover{
-	background-color:red;
+
+.history:hover {
+	background-color: red;
 	border: 4px solid #666;
 }
-.active{
-	background-color:red;
+
+.active {
+	background-color: red;
 	border: 4px solid #666;
 }
-Canvas:active{
-	cursor:crosshair;
+
+body {
+	background-color: black;
 }
-.scroll{
-	overflow:scroll;
+
+Canvas:active {
+	cursor: crosshair;
 }
-.start{
+
+.scroll {
+	overflow: scroll;
+}
+
+.start {
 	position: absolute;
-	background-color:grey;
-	left: 9px; 
-	top: 9px;
-	width: 1400px;
-	height: 1200px;
+	background-color: grey;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
 	visibility: visible;
+	overflow: visible;
+	z-index: 10;
 }
-.normal{
-	background-color:white;
-	
+
+.normal {
+	background-color: white;
+	text-align: center;
+}
+
+.chat {
+	left: 0px;
+	top: 0px;
+	height: 100%;
+	width: 300px;
+	max-width: 300px;
+	position: fixed;
+	border-right: 4px;
+	border-right-style: solid;
+	color: white;
+}
+
+.chatIntern {
+	padding-top: 50px;
+	padding-left: 50px;
+}
+
+input[type="button"] {
+	min-width: 70px;
+	height: 50px;
+	color: aqua;
+	background-color: black;
+}
+
+input[type="text"] {
+	background-color: white;
+}
+
+input[type="button"]:hover {
+	color: red;
+	background-color: black;
+	text-shadow: green;
+}
+
+.hist {
+	right: 0px;
+	top: 0px;
+	height: 100%;
+	width: 400px;
+	max-width: 600px;
+	position: fixed;
+	border-left: 4px;
+	border-left-style: solid;
+	height: 100%;
+}
+
+.log {
+	height: 100%;
+}
+
+.bord {
+	text-align: center;
+	align-items: center;
+	left: 309px;
+	top: 0px;
+	height: 100px;
+	width: 900px;
+	max-width: 900px;
+	position: fixed;
+	border-bottom: 4px;
+	border-bottom-style: solid;
+	border-right-style: solid;
+	border-left-style: solid;
+	z-index: 5;
+}
+
+.menu {
+	top: 25%;
+	position: relative;
+}
+
+div {
+	background-color: navy;
+}
+
+.canvas {
+	border: 1px;
+	border-style: solid;
+	border-color: green;
 }

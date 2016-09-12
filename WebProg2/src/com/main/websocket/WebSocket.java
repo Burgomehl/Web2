@@ -1,10 +1,14 @@
 package com.main.websocket;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.websocket.ClientEndpointConfig;
 import javax.websocket.CloseReason;
 import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
@@ -26,12 +30,14 @@ import com.main.messages.Message;
 import com.main.messages.Type;
 import com.main.messages.forms.FormMessage;
 import com.main.model.History;
+import com.main.websocket.robot.Robot;
 
 @ServerEndpoint(value = "/websocket", encoders = { Encoder.class }, decoders = { Decoder.class })
 public class WebSocket {
 	private ObjectMapper objMapper = new ObjectMapper();
 	private History history;
 	private static Set<Session> session = Collections.synchronizedSet(new HashSet<>());
+	private Robot robo;
 
 	public WebSocket() {
 		history = History.getInstance();
@@ -89,7 +95,25 @@ public class WebSocket {
 		if (history != null) {
 			resendHistory();
 		}
+		adjustRobot();
 		System.out.println("Connection opened.");
+	}
+
+	public synchronized void adjustRobot() {
+		return; //TODO: geht noch nicht.
+//		if (session.size() == 1 && session.size() < 3) {
+//			try {
+//				robo = new Robot(new URI("ws://localhost:8080/WebProg2/websocket"));
+//			} catch (URISyntaxException e) {
+//				e.printStackTrace();
+//			}
+//			robo.start();
+//		} else {
+//			if (robo != null) {
+//				robo.setRobotStop();
+//			}
+//		}
+
 	}
 
 	private void resendHistory() {
@@ -116,6 +140,7 @@ public class WebSocket {
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
 		this.session.remove(session);
+		adjustRobot();
 		System.out.println("Connection closed.");
 	}
 }
