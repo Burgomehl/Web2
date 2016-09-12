@@ -25,7 +25,7 @@ function onMessage(event) {
 	var obj = JSON.parse(event.data);
 	console.log(obj.type);
 	if(obj.type == "HISTORY"){
-		createHistoryObject(JSON.stringify(obj.content.content)+":"+obj.content.type);
+		createHistoryObject(obj.content);
 		drawObject(obj.content);
 	}else{
 		sendMessageToMessageBox(obj.content);
@@ -53,7 +53,7 @@ function changeAtt(e) {
 		console.log(activeElements);
 	} else {
 		e.setAttribute("class", "active");
-		activeElements.push(e);
+		activeElements.push(e.getAttribute("id"));
 	}
 }
 
@@ -61,14 +61,22 @@ function createHistoryObject(content){
 	var div = document.createElement("div");
 	div.setAttribute("onclick", "changeAtt(this)");
 	div.setAttribute("class", "history inActive");
-	var text = JSON.stringify(content);
-	div.appendChild(document.createTextNode(text));
+	div.setAttribute("id",JSON.stringify(content.content.id));
+	var text = JSON.stringify(content.content);
+	div.appendChild(document.createTextNode(text+":"+content.type));
 	document.getElementById("log").appendChild(div);
+}
+
+function deleteObjectByIds(){
+	var text = {
+			ids: activeElements
+	}
+	sendJSONBack("DELETEBYID", text);
 }
 
 function sendJSONBack(type, content) {
 	if (type == "HISTORY") {
-		createHistoryObject(JSON.stringify(content.content)+":"+content.type);
+		createHistoryObject(content);
 	}
 	var cont = {
 		type : type,

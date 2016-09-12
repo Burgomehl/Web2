@@ -87,6 +87,7 @@ function drawCanvas() {
 					type : "RECTANGLE",
 					content : {
 						name: name,
+						id: x+""+y+""+a+""+b,
 						color: color,
 						x: x,
 						y: y,
@@ -110,6 +111,7 @@ function drawCanvas() {
 					type : "ELLIPSE",
 					content : {
 						name: name,
+						id: x+""+y+""+a+""+b,
 						color: color,
 						x: x,
 						y: y,

@@ -3,6 +3,8 @@ package com.main.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omg.Messaging.SyncScopeHelper;
+
 import com.main.messages.Message;
 
 public class History {
@@ -28,5 +30,11 @@ public class History {
 	
 	public void deleteHistory(){
 		history = new ArrayList<>();
+	}
+	
+	public void deleteHistoryItemsById(String id){
+		System.out.println("Size: "+history.size());
+		history.removeIf(e -> {System.out.println(e.getContent()); return e.getContent().toString().contains(id);});
+		System.out.println("Size nach löschen: "+history.size());
 	}
 }

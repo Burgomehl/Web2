@@ -14,13 +14,18 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+
 import com.main.coder.Decoder;
 import com.main.coder.Encoder;
+import com.main.messages.DeleteMessage;
 import com.main.messages.Message;
 import com.main.model.History;
 
 @ServerEndpoint(value = "/websocket", encoders = { Encoder.class }, decoders = { Decoder.class })
 public class WebSocket {
+	private ObjectMapper objMapper = new ObjectMapper();
 	private History history;
 	private static Set<Session> session = Collections.synchronizedSet(new HashSet<>());
 
@@ -31,9 +36,10 @@ public class WebSocket {
 	@OnMessage
 	public void onMessage(Message message, Session session) throws IOException, InterruptedException {
 
+		JsonNode content = message.getContent();
 		switch (message.getType()) {
 		case TEXT:
-			System.out.println("User input: " + message.getContent());
+			System.out.println("User input: " + content);
 			for (Session sessions : this.session) {
 				try {
 					sessions.getBasicRemote().sendObject(message);
@@ -44,7 +50,7 @@ public class WebSocket {
 			break;
 		case HISTORY:
 			history.addHistory(message);
-			System.out.println(message.getContent());
+			System.out.println(content);
 			for (Session sessions : this.session) {
 				if (!session.equals(sessions)) {
 					try {
@@ -65,6 +71,13 @@ public class WebSocket {
 						e.printStackTrace();
 					}
 				}
+			}
+			break;
+		case DELETEBYID:
+			DeleteMessage readValue = objMapper.readValue(content, DeleteMessage.class);
+			for (String string : readValue.getIds()) {
+				System.out.println(string);
+				history.deleteHistoryItemsById(string);
 			}
 			break;
 		default:
