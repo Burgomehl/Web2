@@ -21,13 +21,11 @@ function onError(event) {
 }
 
 function onMessage(event) {
-	console.log(event.data);
 	var obj = JSON.parse(event.data);
-	console.log(obj.type);
-	if(obj.type == "HISTORY"){
+	if (obj.type == "HISTORY") {
 		createHistoryObject(obj.content);
 		drawObject(obj.content);
-	}else{
+	} else {
 		sendMessageToMessageBox(obj.content);
 	}
 }
@@ -40,7 +38,7 @@ function sendMessageToMessageBox(string) {
 function start() {
 	var text = document.getElementById("userinput").value;
 	var name = document.getElementById("name").textContent;
-	content = name+":"+text;
+	content = name + ":" + text;
 	sendJSONBack("TEXT", content);
 	return false;
 }
@@ -49,35 +47,39 @@ function changeAtt(e) {
 	if (e.classList.contains("active")) {
 		e.setAttribute("class", "history inActive");
 		var index = activeElements.indexOf(e);
-		activeElements.splice(index,1);
-		console.log(activeElements);
+		activeElements.splice(index, 1);
 	} else {
 		e.setAttribute("class", "active");
 		activeElements.push(e.getAttribute("id"));
 	}
 }
 
-function createHistoryObject(content){
+function createHistoryObject(content) {
 	var div = document.createElement("div");
 	div.setAttribute("onclick", "changeAtt(this)");
 	div.setAttribute("class", "history inActive");
-	div.setAttribute("id",JSON.stringify(content.content.id));
+	div.setAttribute("id", JSON.stringify(content.id));
 	var text = JSON.stringify(content.content);
-	div.appendChild(document.createTextNode(text+":"+content.type));
+	div.appendChild(document.createTextNode(text + ":" + content.type));
 	document.getElementById("log").appendChild(div);
 }
 
-function deleteObjectByIds(){
+function deleteObjectByIds() {
 	var text = {
-			ids: activeElements
+		ids : activeElements
 	}
+	activeElements = [];
 	sendJSONBack("DELETEBYID", text);
+	var canvas = document.getElementById('testcanvas1');
+	var context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	var myNode = document.getElementById("log");
+	while (myNode.firstChild) {
+		myNode.removeChild(myNode.firstChild);
+	}
 }
 
 function sendJSONBack(type, content) {
-	if (type == "HISTORY") {
-		createHistoryObject(content);
-	}
 	var cont = {
 		type : type,
 		content : content
@@ -85,7 +87,7 @@ function sendJSONBack(type, content) {
 	webSocket.send(JSON.stringify(cont));
 }
 
-function saveUsername(){
+function saveUsername() {
 	var username = document.getElementById("username").value;
 	var userNode = document.createTextNode(username);
 	document.getElementById("name").appendChild(userNode);

@@ -5,7 +5,6 @@ function changeShape(i) {
 }
 function changeColor(i) {
 	color = i;
-	console.log(i)
 	sendMessageToMessageBox(i);
 }
 // Die Canvas-Funktion beim Laden der Seite aufrufen
@@ -17,20 +16,16 @@ function drawCanvas() {
 	var canvas = document.getElementById('testcanvas1');
 	var context = canvas.getContext('2d');
 	document.getElementById("clear").addEventListener('click', function() {
-		console.log("Use deleteHistory");
 	}, false);
-	document.getElementById("deleteHistory").addEventListener('click', function() {
-		context.clearRect(0, 0, canvas.width, canvas.height);
-		if(activeElements.length <0){
-			console.log("Keine Objekte ausgewählt");
-		}else{
-			sendJSONBack("DELETE","ALL");
-			var myNode = document.getElementById("log");
-			while (myNode.firstChild) {
-			    myNode.removeChild(myNode.firstChild);
-			}
-		}
-	}, false);
+	document.getElementById("deleteHistory").addEventListener('click',
+			function() {
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				sendJSONBack("DELETE", "ALL");
+				var myNode = document.getElementById("log");
+				while (myNode.firstChild) {
+					myNode.removeChild(myNode.firstChild);
+				}
+			}, false);
 	// Cursorposition
 	var x, y, a, b;
 	a = 0;
@@ -86,13 +81,12 @@ function drawCanvas() {
 				var content = {
 					type : "RECTANGLE",
 					content : {
-						name: name,
-						id: x+""+y+""+a+""+b,
-						color: color,
-						x: x,
-						y: y,
-						a: a,
-						b: b
+						name : name,
+						color : color,
+						x : x,
+						y : y,
+						a : a,
+						b : b
 					}
 				};
 				sendJSONBack("HISTORY", content);
@@ -106,16 +100,15 @@ function drawCanvas() {
 						+ " y:" + y + "a und b: " + a + "/" + b;
 				var name = document.getElementById("name").textContent;
 				text = name + ":" + text;
-				var rad = Math.sqrt((x - a) * (x - a) + (y - b)* (y - b));
+				var rad = Math.sqrt((x - a) * (x - a) + (y - b) * (y - b));
 				var content = {
 					type : "ELLIPSE",
 					content : {
-						name: name,
-						id: x+""+y+""+a+""+b,
-						color: color,
-						x: x,
-						y: y,
-						rad: rad
+						name : name,
+						color : color,
+						x : x,
+						y : y,
+						rad : rad
 					}
 				};
 				sendJSONBack("HISTORY", content);
@@ -127,15 +120,14 @@ function drawCanvas() {
 	// Default-Farbe
 }
 
-function drawObject(obj){
+function drawObject(obj) {
 	var canvas = document.getElementById('testcanvas1');
 	var context = canvas.getContext('2d');
-	console.log(JSON.stringify(obj));
 	var obj2 = obj.content;
 	context.fillStyle = obj2.color;
 	context.strokeStyle = obj2.color;
 	context.beginPath();
-	switch(obj.type){
+	switch (obj.type) {
 	case "RECTANGLE":
 		context.rect(obj2.a, obj2.b, obj2.x - obj2.a, obj2.y - obj2.b);
 
@@ -145,6 +137,6 @@ function drawObject(obj){
 		break;
 	}
 	context.closePath();
-	context.stroke();	
-	
+	context.stroke();
+
 }

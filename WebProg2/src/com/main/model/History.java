@@ -3,13 +3,13 @@ package com.main.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.omg.Messaging.SyncScopeHelper;
-
-import com.main.messages.Message;
+import com.main.messages.forms.FormMessage;
 
 public class History {
+	private long currentId; 
 	private static History historyObject;
 	private History(){
+		currentId = 0;
 	}
 	
 	public static History getInstance(){
@@ -18,13 +18,13 @@ public class History {
 		}
 		return historyObject;
 	}
-	private List<Message> history = new ArrayList<>();
+	private List<FormMessage> history = new ArrayList<>();
 	
-	public void addHistory(Message m){
+	public void addHistory(FormMessage m){
 		history.add(m);
 	}
 	
-	public List<Message> getHistory(){
+	public List<FormMessage> getHistory(){
 		return history;
 	}
 	
@@ -32,9 +32,11 @@ public class History {
 		history = new ArrayList<>();
 	}
 	
-	public void deleteHistoryItemsById(String id){
-		System.out.println("Size: "+history.size());
-		history.removeIf(e -> {System.out.println(e.getContent()); return e.getContent().toString().contains(id);});
-		System.out.println("Size nach löschen: "+history.size());
+	public void deleteHistoryItemsById(Long id){
+		history.removeIf(e -> e.getId()==id);
+	}
+
+	public synchronized long getCurrentId() {
+		return currentId++;
 	}
 }
