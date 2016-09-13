@@ -20,12 +20,24 @@ function onError(event) {
 	alert(event.data);
 }
 
+function cleanAll(){
+	var canvas = document.getElementById('testcanvas1');
+	var context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	var myNode = document.getElementById("log");
+	while (myNode.firstChild) {
+		myNode.removeChild(myNode.firstChild);
+	}
+}
+
 function onMessage(event) {
 	var obj = JSON.parse(event.data);
 	if (obj.type == "HISTORY") {
 		createHistoryObject(obj.content);
 		drawObject(obj.content);
-	} else {
+	} else if(obj.type == "CLEANUP"){
+		cleanAll();
+	}else {
 		sendMessageToMessageBox(obj.content);
 	}
 }

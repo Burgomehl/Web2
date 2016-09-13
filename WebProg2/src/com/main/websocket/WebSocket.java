@@ -66,6 +66,7 @@ public class WebSocket {
 			break;
 		case DELETE:
 			history.deleteHistory();
+			sendCleanUp();
 			resendHistory();
 			break;
 		case DELETEBYID:
@@ -73,11 +74,20 @@ public class WebSocket {
 			for (String string : readValue.getIds()) {
 				history.deleteHistoryItemsById(Long.valueOf(string));
 			}
+			sendCleanUp();
 			resendHistory();
 			break;
 		default:
 			System.out.println("hm");
 			break;
+		}
+	}
+
+	private void sendCleanUp() {
+		Message m = new Message();
+		m.setType(Type.CLEANUP);
+		for (Session sessionToSend : this.session) {
+			sendMessage(m, sessionToSend);
 		}
 	}
 
