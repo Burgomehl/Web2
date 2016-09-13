@@ -63,7 +63,12 @@ public class Service {
 				Rectangle rec;
 				try {
 					rec = objMapper.readValue(hist.getContent(), Rectangle.class);
-					image.getGraphics().setColor(Color.getColor(rec.getColor()));
+					System.out.println(rec.getColor());
+					String color = rec.getColor();
+					color = color.replace("rgb(", "");
+					color = color.replace(")", "");
+					String[] split = color.split(",");
+					image.getGraphics().setColor(new Color(Integer.valueOf(split[0]), Integer.valueOf(split[1]), Integer.valueOf(split[2])));
 					image.getGraphics().drawRect(rec.getA(), rec.getB(), rec.getX()-rec.getA(), rec.getY()-rec.getB());
 				} catch (IOException e) {
 					e.printStackTrace();
