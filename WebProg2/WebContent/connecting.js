@@ -38,7 +38,7 @@ function onMessage(event) {
 	} else if(obj.type == "CLEANUP"){
 		cleanAll();
 	}else {
-		sendMessageToMessageBox(obj.content);
+		sendMessageToMessageBox(obj.name+":"+obj.content);
 	}
 }
 
@@ -48,9 +48,7 @@ function sendMessageToMessageBox(string) {
 }
 
 function start() {
-	var text = document.getElementById("userinput").value;
-	var name = document.getElementById("name").textContent;
-	content = name + ":" + text;
+	var content = document.getElementById("userinput").value;
 	sendJSONBack("TEXT", content);
 	return false;
 }
@@ -72,7 +70,7 @@ function createHistoryObject(content) {
 	div.setAttribute("class", "history inActive");
 	div.setAttribute("id", JSON.stringify(content.id));
 	var text = JSON.stringify(content.content);
-	div.appendChild(document.createTextNode(text + ":" + content.type));
+	div.appendChild(document.createTextNode(content.name+":"+text + ":" + content.type));
 	document.getElementById("log").appendChild(div);
 }
 
@@ -92,8 +90,10 @@ function deleteObjectByIds() {
 }
 
 function sendJSONBack(type, content) {
+	var name = document.getElementById("name").textContent;
 	var cont = {
 		type : type,
+		name: name,
 		content : content
 	};
 	webSocket.send(JSON.stringify(cont));

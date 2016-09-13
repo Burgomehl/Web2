@@ -74,14 +74,11 @@ function drawCanvas() {
 			if (active) {
 				context.rect(a, b, x - a, y - b);
 				active = false;
-				var text = "a " + a + " b " + b + " x-a " + (x - a) + " y-b "
-						+ (y - b);
 				var name = document.getElementById("name").textContent;
-				text = name + ":" + text;
 				var content = {
 					type : "RECTANGLE",
+					name : name,
 					content : {
-						name : name,
 						color : color,
 						x : x,
 						y : y,
@@ -96,18 +93,17 @@ function drawCanvas() {
 				context.arc(x, y, Math.sqrt((x - a) * (x - a) + (y - b)
 						* (y - b)), 0, 2 * Math.PI, true);
 				active = false;
-				var text = "x, y, Math.sqrt((x-a)*(x-a)+(y-b)*(y-b)) x:" + x
-						+ " y:" + y + "a und b: " + a + "/" + b;
 				var name = document.getElementById("name").textContent;
-				text = name + ":" + text;
 				var rad = Math.sqrt((x - a) * (x - a) + (y - b) * (y - b));
 				var content = {
 					type : "ELLIPSE",
+					name : name,
 					content : {
-						name : name,
 						color : color,
 						x : x,
 						y : y,
+						a : a,
+						b : b,
 						rad : rad
 					}
 				};

@@ -4,6 +4,7 @@ import org.codehaus.jackson.JsonNode;
 
 public class FormMessage {
 	private FormType type;
+	private String name;
 	private JsonNode content;
 	private long id;
 
@@ -29,6 +30,14 @@ public class FormMessage {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

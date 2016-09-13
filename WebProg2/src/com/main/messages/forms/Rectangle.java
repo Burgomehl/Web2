@@ -5,6 +5,7 @@ public class Rectangle {
 	private int y;
 	private int a;
 	private int b;
+	private String color;
 
 	public int getX() {
 		return x;
@@ -36,5 +37,13 @@ public class Rectangle {
 
 	public void setB(int b) {
 		this.b = b;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
 	}
 }

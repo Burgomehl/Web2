@@ -8,6 +8,7 @@ import org.codehaus.jackson.JsonNode;
 public class Message {
 
 	private Type type;
+	private String name;
 	private JsonNode content;
 
 	public Type getType() {
@@ -24,6 +25,14 @@ public class Message {
 
 	public void setContent(JsonNode content) {
 		this.content = content;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
