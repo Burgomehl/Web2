@@ -1,6 +1,7 @@
 var activeElements = [];
 var animatedElements = [];
 var webSocket = new WebSocket('ws://localhost:8080/WebProg2/websocket');
+var isAnimated = false;
 webSocket.onerror = function(event) {
 	onError(event)
 };
@@ -22,12 +23,25 @@ function onError(event) {
 }
 
 function cleanAll() {
-	var canvas = document.getElementById('testcanvas1');
-	var context = canvas.getContext('2d');
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	cleanCanvas();
 	var myNode = document.getElementById("log");
 	while (myNode.firstChild) {
 		myNode.removeChild(myNode.firstChild);
+	}
+}
+
+function cleanCanvas() {
+	var canvas = document.getElementById('testcanvas1');
+	var context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function cleanById(ids) {
+	var myNode = document.getElementById("log");
+	for (i = 0; i < ids.length; ++i) {
+		var nodeToDelete = document.getElementById(ids[i]);
+		console.log(nodeToDelete);
+		myNode.removeChild(nodeToDelete);
 	}
 }
 
@@ -48,7 +62,7 @@ function sendMessageToMessageBox(string) {
 			+ "</div>";
 }
 
-function start() {
+function chatfunction() {
 	var content = document.getElementById("userinput").value;
 	sendJSONBack("TEXT", content);
 	return false;
@@ -68,49 +82,49 @@ function changeAtt(e) {
 function animate() {
 	var id = setInterval(frame, 100);
 	function frame() {
-		if (animatedElements.length > 0) {
+		if (animatedElements.length > 0 && isAnimated) {
 			var text = {
 				ids : animatedElements
 			}
 			sendJSONBack("ANIMATE", text);
-			cleanAll();
-		}else{
-			clearIntervall(id);
+			//cleanById(animatedElements);
+			cleanCanvas();
+		} else {
+			clearInterval(id);
+			isAnimated = false;
 		}
 	}
 }
 
-function checkAnimate(e) {
+function checkAnimate(e) { // Sideeffect -> nur markierte Objekte werden animiert.
 	animatedElements = activeElements;
-	if (animatedElements.length == 1) {
+	if (!isAnimated) {
 		animate();
+		isAnimated = true;
 	}
 }
 
 function createHistoryObject(content) {
-	var div = document.createElement("div");
-	div.setAttribute("onclick", "changeAtt(this)");
-	div.setAttribute("class", "history inActive");
-	div.setAttribute("id", JSON.stringify(content.id));
-	var text = JSON.stringify(content.content);
-	div.appendChild(document.createTextNode(content.name + ":" + text + ":"
-			+ content.type));
-	document.getElementById("log").appendChild(div);
+	if (document.getElementById(JSON.stringify(content.id)) == undefined) {
+		var div = document.createElement("div");
+		div.setAttribute("onclick", "changeAtt(this)");
+		div.setAttribute("class", "history inActive");
+		div.setAttribute("id", JSON.stringify(content.id));
+		var text = JSON.stringify(content.content);
+		div.appendChild(document.createTextNode(content.name + ":" + text + ":"
+				+ content.type));
+		document.getElementById("log").appendChild(div);
+	}
 }
 
 function deleteObjectByIds() {
 	var text = {
 		ids : activeElements
 	}
+	cleanCanvas();
+	cleanById(activeElements);
 	activeElements = [];
 	sendJSONBack("DELETEBYID", text);
-	var canvas = document.getElementById('testcanvas1');
-	var context = canvas.getContext('2d');
-	context.clearRect(0, 0, canvas.width, canvas.height);
-	var myNode = document.getElementById("log");
-	while (myNode.firstChild) {
-		myNode.removeChild(myNode.firstChild);
-	}
 }
 
 function sendJSONBack(type, content) {

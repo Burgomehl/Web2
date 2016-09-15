@@ -88,6 +88,10 @@ public class HistoryHandler {
 					Ellipse ell;
 					try {
 						ell = objMapper.readValue(formMessage.getContent(), Ellipse.class);
+						ell.setX(generateNextPosition(ell.getX(), 0));
+						ell.setY(generateNextPosition(ell.getY(), 0));
+						JsonNode readTree = objMapper.readTree(objMapper.writeValueAsString(ell));
+						formMessage.setContent(readTree);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
