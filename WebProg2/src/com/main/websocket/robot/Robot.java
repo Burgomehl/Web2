@@ -29,6 +29,7 @@ import com.main.messages.forms.FormMessage;
 import com.main.messages.forms.FormType;
 import com.main.messages.forms.Rectangle;
 import com.main.model.History;
+import com.main.websocket.HistoryHandler;
 import com.main.websocket.WebSocket;
 
 @ClientEndpoint
@@ -36,7 +37,7 @@ public class Robot extends Thread {
 	public static boolean active = false;
 	private int posX = 750, posY = 750;
 	private int sizeA = 50, sizeB = 50;
-	History history;
+	HistoryHandler historyHandler;
 	private ObjectMapper objMapper = new ObjectMapper();
 	private Session robotSession;
 
@@ -44,7 +45,7 @@ public class Robot extends Thread {
 		try {
 			WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 			container.connectToServer(Robot.class, endpointURI);
-			history = History.getInstance();
+			historyHandler = HistoryHandler.getInstance();
 		} catch (DeploymentException | IOException e) {
 			e.printStackTrace();
 		}
@@ -118,7 +119,7 @@ public class Robot extends Thread {
 	private Message translateToJson(FormType type, JsonNode readTree)
 			throws IOException, JsonProcessingException, JsonGenerationException, JsonMappingException {
 		FormMessage formMessage = new FormMessage();
-		formMessage.setId(history.getCurrentId());
+		formMessage.setId(historyHandler.getCurrentId());
 		formMessage.setContent(readTree);
 		formMessage.setType(type);
 		readTree = objMapper.readTree(objMapper.writeValueAsString(formMessage));

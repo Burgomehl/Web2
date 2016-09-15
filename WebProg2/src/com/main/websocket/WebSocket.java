@@ -35,12 +35,12 @@ import com.main.websocket.robot.Robot;
 @ServerEndpoint(value = "/websocket", encoders = { Encoder.class }, decoders = { Decoder.class })
 public class WebSocket {
 	private ObjectMapper objMapper = new ObjectMapper();
-	private History history;
+	private HistoryHandler historyHandler;
 	private static Set<Session> session = Collections.synchronizedSet(new HashSet<>());
 	private Robot robo;
 
 	public WebSocket() {
-		history = History.getInstance();
+		historyHandler = HistoryHandler.getInstance();
 	}
 
 	@OnMessage
@@ -57,24 +57,29 @@ public class WebSocket {
 			break;
 		case HISTORY:
 			FormMessage histObj = objMapper.readValue(message.getContent(), FormMessage.class);
-			histObj.setId(history.getCurrentId());
-			history.addHistory(histObj);
+			histObj.setId(historyHandler.getCurrentId());
+			historyHandler.addHistory(histObj);
 			System.out.println(content);
 			for (Session sessions : this.session) {
 				sendHistoryObject(sessions, histObj);
 			}
 			break;
 		case DELETE:
-			history.deleteHistory();
+			historyHandler.deleteHistory();
 			sendCleanUp();
 			resendHistory();
 			break;
 		case DELETEBYID:
 			DeleteMessage readValue = objMapper.readValue(content, DeleteMessage.class);
 			for (String string : readValue.getIds()) {
-				history.deleteHistoryItemsById(Long.valueOf(string));
+				historyHandler.deleteHistoryItemsById(Long.valueOf(string));
 			}
 			sendCleanUp();
+			resendHistory();
+			break;
+		case ANIMATE:
+			DeleteMessage objectsToAnimate= objMapper.readValue(content, DeleteMessage.class);
+			historyHandler.animate(objectsToAnimate);
 			resendHistory();
 			break;
 		default:
@@ -102,7 +107,7 @@ public class WebSocket {
 	@OnOpen
 	public void onOpen(Session session, EndpointConfig endpointConfig) {
 		this.session.add(session);
-		if (history != null) {
+		if (historyHandler != null) {
 			resendHistory();
 		}
 		adjustRobot();
@@ -128,7 +133,7 @@ public class WebSocket {
 
 	private void resendHistory() {
 		for (Session sessions : this.session) {
-			for (FormMessage hist : history.getHistory()) {
+			for (FormMessage hist : historyHandler.getHistory()) {
 				sendHistoryObject(sessions, hist);
 			}
 		}

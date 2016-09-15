@@ -24,11 +24,11 @@ import com.main.model.History;
 @Path("/get")
 public class Service {
 
-	private History history;
+	private HistoryHandler historyHandler;
 	private ObjectMapper objMapper = new ObjectMapper();
 
 	public Service() {
-		history = History.getInstance();
+		historyHandler = HistoryHandler.getInstance();
 	}
 
 	@GET
@@ -36,7 +36,7 @@ public class Service {
 	@Produces({ "application/json" })
 	public List<Message> test() {
 		List<Message> listToSend = new ArrayList<Message>();
-		for (FormMessage hist : history.getHistory()) {
+		for (FormMessage hist : historyHandler.getHistory()) {
 			JsonNode readTree;
 			try {
 				readTree = objMapper.readTree(objMapper.writeValueAsString(hist));
@@ -57,7 +57,7 @@ public class Service {
 	public Response printImage() {
 		BufferedImage image = new BufferedImage(800, 800, 1);
 		List<Message> listToSend = new ArrayList<Message>();
-		for (FormMessage hist : history.getHistory()) {
+		for (FormMessage hist : historyHandler.getHistory()) {
 			switch (hist.getType()) {
 			case RECTANGLE:
 				Rectangle rec;
@@ -69,7 +69,7 @@ public class Service {
 					color = color.replace(")", "");
 					String[] split = color.split(",");
 					image.getGraphics().setColor(new Color(Integer.valueOf(split[0]), Integer.valueOf(split[1]), Integer.valueOf(split[2])));
-					image.getGraphics().drawRect(rec.getA(), rec.getB(), rec.getX()-rec.getA(), rec.getY()-rec.getB());
+					image.getGraphics().drawRect(rec.getA(), rec.getB(), rec.getX(), rec.getY());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

@@ -1,4 +1,5 @@
 var activeElements = [];
+var animatedElements = [];
 var webSocket = new WebSocket('ws://localhost:8080/WebProg2/websocket');
 webSocket.onerror = function(event) {
 	onError(event)
@@ -20,7 +21,7 @@ function onError(event) {
 	alert(event.data);
 }
 
-function cleanAll(){
+function cleanAll() {
 	var canvas = document.getElementById('testcanvas1');
 	var context = canvas.getContext('2d');
 	context.clearRect(0, 0, canvas.width, canvas.height);
@@ -35,10 +36,10 @@ function onMessage(event) {
 	if (obj.type == "HISTORY") {
 		createHistoryObject(obj.content);
 		drawObject(obj.content);
-	} else if(obj.type == "CLEANUP"){
+	} else if (obj.type == "CLEANUP") {
 		cleanAll();
-	}else {
-		sendMessageToMessageBox(obj.name+":"+obj.content);
+	} else {
+		sendMessageToMessageBox(obj.name + ":" + obj.content);
 	}
 }
 
@@ -64,13 +65,36 @@ function changeAtt(e) {
 	}
 }
 
+function animate() {
+	var id = setInterval(frame, 100);
+	function frame() {
+		if (animatedElements.length > 0) {
+			var text = {
+				ids : animatedElements
+			}
+			sendJSONBack("ANIMATE", text);
+			cleanAll();
+		}else{
+			clearIntervall(id);
+		}
+	}
+}
+
+function checkAnimate(e) {
+	animatedElements = activeElements;
+	if (animatedElements.length == 1) {
+		animate();
+	}
+}
+
 function createHistoryObject(content) {
 	var div = document.createElement("div");
 	div.setAttribute("onclick", "changeAtt(this)");
 	div.setAttribute("class", "history inActive");
 	div.setAttribute("id", JSON.stringify(content.id));
 	var text = JSON.stringify(content.content);
-	div.appendChild(document.createTextNode(content.name+":"+text + ":" + content.type));
+	div.appendChild(document.createTextNode(content.name + ":" + text + ":"
+			+ content.type));
 	document.getElementById("log").appendChild(div);
 }
 
@@ -93,7 +117,7 @@ function sendJSONBack(type, content) {
 	var name = document.getElementById("name").textContent;
 	var cont = {
 		type : type,
-		name: name,
+		name : name,
 		content : content
 	};
 	webSocket.send(JSON.stringify(cont));

@@ -72,7 +72,9 @@ function drawCanvas() {
 			}
 		} else if (shape == 1) {
 			if (active) {
-				context.rect(a, b, x - a, y - b);
+				var tempX = x-a;
+				var tempY = y-b;
+				context.rect(a, b, tempX, tempY);
 				active = false;
 				var name = document.getElementById("name").textContent;
 				var content = {
@@ -80,8 +82,8 @@ function drawCanvas() {
 					name : name,
 					content : {
 						color : color,
-						x : x,
-						y : y,
+						x : tempX,
+						y : tempY,
 						a : a,
 						b : b
 					}
@@ -125,7 +127,7 @@ function drawObject(obj) {
 	context.beginPath();
 	switch (obj.type) {
 	case "RECTANGLE":
-		context.rect(obj2.a, obj2.b, obj2.x - obj2.a, obj2.y - obj2.b);
+		context.rect(obj2.a, obj2.b, obj2.x, obj2.y);
 
 		break;
 	case "ELLIPSE":
