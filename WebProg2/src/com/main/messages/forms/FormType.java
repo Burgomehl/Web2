@@ -1,5 +1,5 @@
 package com.main.messages.forms;
 
 public enum FormType {
-	RECTANGLE,ELLIPSE
+	RECTANGLE,ELLIPSE,SNAKE
 }

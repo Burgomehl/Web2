@@ -1,5 +1,7 @@
 var shape = 0;
 var color = "rgb(255,0,0)";
+var snakeAElements = [];
+var snakeBElements = [];
 function changeShape(i) {
 	shape = i;
 }
@@ -53,6 +55,19 @@ function drawCanvas() {
 			active = false;
 			a = 0;
 			b = 0;
+			var name = document.getElementById("name").textContent;
+			var content = {
+					type : "SNAKE",
+					name : name,
+					content : {
+						color : color,
+						aElements: snakeAElements,
+						bElements: snakeBElements
+					}
+				};
+			sendJSONBack("HISTORY", content);
+			snakeAElements = [];
+			snakeBElements = [];
 		} else {
 			active = true;
 		}
@@ -69,11 +84,13 @@ function drawCanvas() {
 				}
 				a = x;
 				b = y;
+				snakeAElements.push(a);
+				snakeBElements.push(b);
 			}
 		} else if (shape == 1) {
 			if (active) {
-				var tempX = x-a;
-				var tempY = y-b;
+				var tempX = x - a;
+				var tempY = y - b;
 				context.rect(a, b, tempX, tempY);
 				active = false;
 				var name = document.getElementById("name").textContent;
@@ -133,7 +150,14 @@ function drawObject(obj) {
 	case "ELLIPSE":
 		context.arc(obj2.x, obj2.y, obj2.rad, 0, 2 * Math.PI, true);
 		break;
+	case "SNAKE":
+//		context.moveTo(obj2.aElements[0],obj2.bElements[0]);
+		for(i = 0; i < obj2.aElements.length; ++i){
+			context.lineTo(obj2.aElements[i],obj2.bElements[i]);
+		}
+		break;
 	}
+		
 	context.closePath();
 	context.stroke();
 

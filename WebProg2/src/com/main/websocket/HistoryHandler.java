@@ -12,6 +12,7 @@ import com.main.messages.DeleteMessage;
 import com.main.messages.forms.Ellipse;
 import com.main.messages.forms.FormMessage;
 import com.main.messages.forms.Rectangle;
+import com.main.messages.forms.Snake;
 import com.main.model.History;
 
 public class HistoryHandler {
@@ -53,7 +54,6 @@ public class HistoryHandler {
 
 	private int generateNextPosition(int lastValue, int xyPosition) {
 		int nextValue = lastValue + r.nextInt(21) - 10;
-		System.out.println("for loop lastValue" + lastValue + "next value " + nextValue + " limit " + xyPosition);
 		while ((nextValue + xyPosition) > maxSizeX || (nextValue + xyPosition) < 0) {
 			if (xyPosition == 0) {
 				nextValue = lastValue + r.nextInt(20) - 10;
@@ -61,12 +61,10 @@ public class HistoryHandler {
 				nextValue = lastValue + r.nextInt(Math.abs(xyPosition) % 20) - (Math.abs(xyPosition) / 2) % 10;
 			}
 		}
-		System.out.println("lastValue" + lastValue + "next value " + nextValue + " limit " + xyPosition);
 		return nextValue;
 	}
 
 	public void animate(DeleteMessage objectsToAnimate) {
-		System.out.println("size of list " + getHistory().size());
 		for (String id : objectsToAnimate.getIds()) {
 			List<FormMessage> collect = history.getHistory().parallelStream().filter(e -> e.getId() == Long.valueOf(id))
 					.collect(Collectors.toList());
@@ -96,9 +94,52 @@ public class HistoryHandler {
 						e.printStackTrace();
 					}
 					break;
+				case SNAKE:
+					Snake sna;
+					try {
+						sna = objMapper.readValue(formMessage.getContent(), Snake.class);
+						if (sna.getaElements().length > 0) {
+							int oldA = sna.getaElements()[0];
+							int oldB = sna.getbElements()[0];
+							while ((sna.getaElements()[0] < 0 || sna.getbElements()[0] < 0)
+									|| (sna.getaElements()[0] == oldA && sna.getbElements()[0] == oldB)) {
+								int direction = r.nextInt(4);
+								sna.getaElements()[0] = oldA;
+								sna.getbElements()[0] = oldB;
+								switch (direction) {
+								case 0:
+									sna.getaElements()[0] += 10;
+									break;
+								case 1:
+									sna.getbElements()[0] += 10;
+									break;
+								case 2:
+									sna.getaElements()[0] -= 10;
+									break;
+								case 3:
+									sna.getbElements()[0] -= 10;
+									break;
+								}
+								sna.getaElements()[0] %= 800;
+								sna.getbElements()[0] %= 800;
+							}
+							for (int i = 1; i < sna.getaElements().length; ++i) {
+								int tempA = sna.getaElements()[i];
+								int tempB = sna.getbElements()[i];
+								sna.getaElements()[i] = oldA;
+								sna.getbElements()[i] = oldB;
+								oldA = tempA;
+								oldB = tempB;
+							}
+							JsonNode readTree = objMapper.readTree(objMapper.writeValueAsString(sna));
+							formMessage.setContent(readTree);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					break;
 				}
 			}
 		}
-		System.out.println("size of list " + getHistory().size());
 	}
 }

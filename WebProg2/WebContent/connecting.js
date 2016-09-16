@@ -80,7 +80,7 @@ function changeAtt(e) {
 }
 
 function animate() {
-	var id = setInterval(frame, 100);
+	var id = setInterval(frame, 600);
 	function frame() {
 		if (animatedElements.length > 0 && isAnimated) {
 			var text = {
