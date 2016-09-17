@@ -2,8 +2,8 @@
 <html>
 <head>
 <title>Web Socket "Hello World"</title>
-<script type="text/javascript" src="painting.js"></script>
-<script type="text/javascript" src="connecting.js"></script>
+
+
 <link rel="stylesheet" type="text/css" href="design.css"></link>
 </head>
 
@@ -55,7 +55,8 @@
 			value="Get History as JSON" /> <input id="deleteHistory"
 			type="button" value="DeleteAll" /> <input id="deleteObjects"
 			type="button" onclick="deleteObjectByIds()" value="DeleteSelected" />
-			<input id="animateObjects" type="button" value="Animate" onclick="checkAnimate()"/>
+		<input id="animateObjects" type="button" value="Animate"
+			onclick="checkAnimate()" />
 		<div id="log" class="scroll log" style="margin: 0px; width: 100%;"></div>
 	</div>
 	<div class="bord">
@@ -64,12 +65,15 @@
 				type="button" onclick="changeShape(0)" value="S" /> <input
 				type="button" onclick="changeShape(1)" value="Viereck" /> <input
 				type="button" onclick="changeColor('rgb(0,255,0)')" value="Gruen" />
-			<input type="button" onclick="changeColor('rgb(255,0,0)')"
-				value="Rot" /> <input type="button"
-				onclick="changeColor('rgb(0,0,255)')" value="Blau" /> <input
-				class="btn" type="button" id="clear" value="clear" />
+			<input type="button" onclick="changeShape(3)" value="Linie" /> <input
+				type="button" onclick="changeColor('rgb(255,0,0)')" value="Rot" />
+			<input type="button" onclick="changeColor('rgb(0,0,255)')"
+				value="Blau" /> <input class="btn" type="button" id="clear"
+				value="clear" />
 		</div>
 	</div>
+	<script type="text/javascript" src="painting2.js"></script>
+	<script type="text/javascript" src="connecting.js"></script>
 </body>
 
 

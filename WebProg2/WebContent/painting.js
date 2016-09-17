@@ -17,8 +17,7 @@ if (window.addEventListener) {
 function drawCanvas() {
 	var canvas = document.getElementById('testcanvas1');
 	var context = canvas.getContext('2d');
-	document.getElementById("clear").addEventListener('click', function() {
-	}, false);
+	document.getElementById("clear").addEventListener('click', function() {}, false);
 	document.getElementById("deleteHistory").addEventListener('click',
 			function() {
 				context.clearRect(0, 0, canvas.width, canvas.height);
@@ -28,6 +27,7 @@ function drawCanvas() {
 					myNode.removeChild(myNode.firstChild);
 				}
 			}, false);
+	
 	// Cursorposition
 	var x, y, a, b;
 	a = 0;
@@ -57,14 +57,14 @@ function drawCanvas() {
 			b = 0;
 			var name = document.getElementById("name").textContent;
 			var content = {
-					type : "SNAKE",
-					name : name,
-					content : {
-						color : color,
-						aElements: snakeAElements,
-						bElements: snakeBElements
-					}
-				};
+				type : "SNAKE",
+				name : name,
+				content : {
+					color : color,
+					aElements : snakeAElements,
+					bElements : snakeBElements
+				}
+			};
 			sendJSONBack("HISTORY", content);
 			snakeAElements = [];
 			snakeBElements = [];
@@ -72,11 +72,14 @@ function drawCanvas() {
 			active = true;
 		}
 	}
+	
+	
 	function paint() {
 		context.fillStyle = color;
 		context.strokeStyle = color;
 		context.beginPath();
-		if (shape == 0) {
+		switch (shape) {
+		case 0:
 			if (active) {
 				context.moveTo(x, y);
 				if (a != 0) {
@@ -87,7 +90,8 @@ function drawCanvas() {
 				snakeAElements.push(a);
 				snakeBElements.push(b);
 			}
-		} else if (shape == 1) {
+			break;
+		case 1:
 			if (active) {
 				var tempX = x - a;
 				var tempY = y - b;
@@ -107,7 +111,8 @@ function drawCanvas() {
 				};
 				sendJSONBack("HISTORY", content);
 			}
-		} else if (shape == 2) {
+			break;
+		case 2:
 			if (active) {
 				context.arc(x, y, Math.sqrt((x - a) * (x - a) + (y - b)
 						* (y - b)), 0, 2 * Math.PI, true);
@@ -128,6 +133,18 @@ function drawCanvas() {
 				};
 				sendJSONBack("HISTORY", content);
 			}
+			break;
+		case 3:
+			if(active){
+				context.moveTo(a,b);
+				context.lineTo(x,y);
+				active = false;
+			}
+			break;
+		case 4:
+			
+			break;
+
 		}
 		context.closePath();
 		context.stroke();
@@ -141,24 +158,22 @@ function drawObject(obj) {
 	var obj2 = obj.content;
 	context.fillStyle = obj2.color;
 	context.strokeStyle = obj2.color;
-	context.beginPath();
 	switch (obj.type) {
 	case "RECTANGLE":
-		context.rect(obj2.a, obj2.b, obj2.x, obj2.y);
-
+		context.strokeRect(obj2.a, obj2.b, obj2.x, obj2.y);
 		break;
 	case "ELLIPSE":
 		context.arc(obj2.x, obj2.y, obj2.rad, 0, 2 * Math.PI, true);
 		break;
 	case "SNAKE":
-//		context.moveTo(obj2.aElements[0],obj2.bElements[0]);
-		for(i = 0; i < obj2.aElements.length; ++i){
-			context.lineTo(obj2.aElements[i],obj2.bElements[i]);
+		context.moveTo(obj2.aElements[0],obj2.bElements[0]);
+		context.beginPath();
+		for (i = 1; i < obj2.aElements.length; ++i) {
+			context.lineTo(obj2.aElements[i], obj2.bElements[i]);
 		}
 		break;
 	}
-		
+
 	context.closePath();
-	context.stroke();
 
 }
