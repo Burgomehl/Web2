@@ -11,13 +11,19 @@ if (window.addEventListener) {
 				sendJSONBack("DELETE", "ALL");
 				cleanAll();
 			}, false);
+	document.getElementById("colorChanger").addEventListener('change',
+			function(){
+		color = document.getElementById("colorChanger").value;
+		ctx.fillStyle = color;
+		ctx.strokeStyle = color;
+	}, false);
+	document.getElementById("userinput").onkeyup = function(event){
+		if(event.key == "Enter"){
+			chatfunction();
+		}
+	}
 }
 
-function changeColor(i) {
-	color = i;
-	ctx.fillStyle = color;
-	ctx.strokeStyle = color;
-}
 
 function drawCanvas(){
 	ctx.fillStyle = color;

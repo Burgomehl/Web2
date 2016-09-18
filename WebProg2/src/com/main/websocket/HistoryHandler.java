@@ -11,6 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.main.messages.DeleteMessage;
 import com.main.messages.forms.Ellipse;
 import com.main.messages.forms.FormMessage;
+import com.main.messages.forms.Line;
 import com.main.messages.forms.Rectangle;
 import com.main.messages.forms.Snake;
 import com.main.model.History;
@@ -31,24 +32,24 @@ public class HistoryHandler {
 		return historyHandler;
 	}
 
-	public void addHistory(FormMessage m) {
+	public synchronized void addHistory(FormMessage m) {
 		history.addHistory(m);
 		;
 	}
 
-	public List<FormMessage> getHistory() {
+	public synchronized List<FormMessage> getHistory() {
 		return history.getHistory();
 	}
 
-	public void deleteHistory() {
+	public synchronized void deleteHistory() {
 		history.deleteHistory();
 	}
 
-	public void deleteHistoryItemsById(Long id) {
+	public synchronized void deleteHistoryItemsById(Long id) {
 		history.deleteHistoryItemsById(id);
 	}
 
-	public long getCurrentId() {
+	public synchronized long getCurrentId() {
 		return history.getCurrentId();
 	}
 
@@ -64,7 +65,7 @@ public class HistoryHandler {
 		return nextValue;
 	}
 
-	public void animate(DeleteMessage objectsToAnimate) {
+	public synchronized void animate(DeleteMessage objectsToAnimate) {
 		for (String id : objectsToAnimate.getIds()) {
 			List<FormMessage> collect = history.getHistory().parallelStream().filter(e -> e.getId() == Long.valueOf(id))
 					.collect(Collectors.toList());
@@ -74,8 +75,8 @@ public class HistoryHandler {
 					Rectangle rec;
 					try {
 						rec = objMapper.readValue(formMessage.getContent(), Rectangle.class);
-						rec.setA(generateNextPosition(rec.getA(), 0));
-						rec.setB(generateNextPosition(rec.getB(), 0));
+						rec.setX(generateNextPosition(rec.getX(), 0));
+						rec.setY(generateNextPosition(rec.getY(), 0));
 						JsonNode readTree = objMapper.readTree(objMapper.writeValueAsString(rec));
 						formMessage.setContent(readTree);
 					} catch (IOException e) {
@@ -91,6 +92,20 @@ public class HistoryHandler {
 						JsonNode readTree = objMapper.readTree(objMapper.writeValueAsString(ell));
 						formMessage.setContent(readTree);
 					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					break;
+				case LINE:
+					Line li;
+					try{
+						li = objMapper.readValue(formMessage.getContent(), Line.class);
+						li.setX(generateNextPosition(li.getX(), 0));
+						li.setY(generateNextPosition(li.getY(), 0));
+						li.setA(generateNextPosition(li.getA(), 0));
+						li.setB(generateNextPosition(li.getB(), 0));
+						JsonNode readTree = objMapper.readTree(objMapper.writeValueAsString(li));
+						formMessage.setContent(readTree);
+					}catch(IOException e){
 						e.printStackTrace();
 					}
 					break;

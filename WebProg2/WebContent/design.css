@@ -38,9 +38,9 @@ Canvas:active {
 }
 
 .normal {
-	position:relative;
-	top:30%;
-	left:0px;
+	position: relative;
+	top: 30%;
+	left: 0px;
 	background-color: white;
 	text-align: center;
 }
@@ -54,7 +54,11 @@ Canvas:active {
 	position: fixed;
 	border-right: 4px;
 	border-right-style: solid;
-	color: white;
+	color: black;
+}
+.loginbutton{
+	left: 50%;
+	position: relative;
 }
 
 .chatIntern {
@@ -69,21 +73,26 @@ input[type="button"] {
 	background-color: black;
 }
 
-input[type="text"] {
-	background-color: white;
+.button {
+	float: left;
+	min-width: 70px;
+	height: 50px;
+	color: aqua;
 }
 
-input[type="button"]:hover {
-	color: red;
-	background-color: black;
-	text-shadow: green;
+.button:hover {
+	float: left;
+	min-width: 70px;
+	height: 50px;
+	color: aqua;
+	border: 4px solid grey;
 }
 
 .hist {
 	right: 0px;
 	top: 0px;
 	height: 100%;
-	width: 400px;
+	width: 600px;
 	max-width: 600px;
 	position: fixed;
 	border-left: 4px;
@@ -113,11 +122,12 @@ input[type="button"]:hover {
 
 .menu {
 	top: 25%;
+	left: 25%;
 	position: relative;
 }
 
 div {
-	background-color: navy;
+	background-color: white;
 }
 
 .canvas {

@@ -30,7 +30,7 @@ public class History {
 		history.removeIf(e -> e.getId() == id);
 	}
 
-	public synchronized long getCurrentId() {
+	public long getCurrentId() {
 		return currentId++;
 	}
 

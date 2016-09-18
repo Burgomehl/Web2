@@ -68,6 +68,7 @@ function sendMessageToMessageBox(string) {
 function chatfunction() {
 	var content = document.getElementById("userinput").value;
 	sendJSONBack("TEXT", content);
+	document.getElementById("userinput").value = "";
 	return false;
 }
 
@@ -108,6 +109,11 @@ function checkAnimate(e) { // Sideeffect -> nur markierte Objekte werden animier
 	}
 }
 
+function stopAnimation(){
+	animatedElements = [];
+	isAnimated = false;
+}
+
 function createHistoryObject(content) {
 	if (document.getElementById(JSON.stringify(content.id)) == undefined) {
 		var div = document.createElement("div");
@@ -143,7 +149,11 @@ function sendJSONBack(type, content) {
 
 function saveUsername() {
 	var username = document.getElementById("username").value;
-	var userNode = document.createTextNode(username);
-	document.getElementById("name").appendChild(userNode);
-	document.getElementById("start").style.visibility = "hidden";
+	if(username != ""){
+		var userNode = document.createTextNode(username);
+		document.getElementById("name").appendChild(userNode);
+		document.getElementById("start").style.visibility = "hidden";
+	}else{
+		alert("Nutzernamen eingeben");
+	}
 }
