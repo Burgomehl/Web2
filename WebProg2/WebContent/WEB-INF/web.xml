@@ -15,4 +15,7 @@
 		<servlet-name>JAX-RS Servlet</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
+	<listener>
+		<listener-class>com.main.websocket.robot.RobotConnector</listener-class>
+	</listener>
 </web-app>

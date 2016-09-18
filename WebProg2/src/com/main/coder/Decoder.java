@@ -27,6 +27,7 @@ public class Decoder implements javax.websocket.Decoder.Text<Message> {
 	@Override
 	public Message decode(String s) throws DecodeException {
 		try {
+			System.out.println(s);
 			return objMapper.readValue(s, Message.class);
 		} catch (IOException e) {
 			throw new DecodeException(s,"...");

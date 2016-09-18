@@ -44,7 +44,7 @@ public class Robot extends Thread {
 	public Robot(URI endpointURI) {
 		try {
 			WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-			container.connectToServer(Robot.class, endpointURI);
+			container.connectToServer(this, endpointURI);
 			historyHandler = HistoryHandler.getInstance();
 		} catch (DeploymentException | IOException e) {
 			e.printStackTrace();
@@ -57,44 +57,50 @@ public class Robot extends Thread {
 
 	@Override
 	public void run() {
-		Random r = new Random();
-		while (active) {
-			switch (r.nextInt(2)) {
-			case 0:
-				Rectangle obj = new Rectangle();
-				obj.setX(r.nextInt(posX - sizeA));
-				obj.setY(r.nextInt(posY - sizeB));
-				obj.setA(r.nextInt(sizeA));
-				obj.setB(r.nextInt(sizeB));
-				send(obj, FormType.RECTANGLE);
-				break;
-			case 1:
-				Ellipse obj1 = new Ellipse();
-				obj1.setX(r.nextInt(posX - sizeA));
-				obj1.setY(r.nextInt(posY - sizeB));
-				int a = r.nextInt(sizeA);
-				int b = r.nextInt(sizeB);
-				double rad = Math.sqrt((obj1.getX() - a) * (obj1.getX() - a) + (obj1.getY() - b) * (obj1.getY() - b));
-				obj1.setRad(rad);
-				send(obj1, FormType.ELLIPSE);
-				break;
+		synchronized (this) {
+
+			Random r = new Random();
+			while (active) {
+				switch (r.nextInt(2)) {
+				case 0:
+					Rectangle obj = new Rectangle();
+					obj.setX(r.nextInt(posX - sizeA));
+					obj.setY(r.nextInt(posY - sizeB));
+					obj.setA(r.nextInt(sizeA));
+					obj.setB(r.nextInt(sizeB));
+					send(obj, FormType.RECTANGLE);
+					break;
+				case 1:
+					Ellipse obj1 = new Ellipse();
+					obj1.setX(r.nextInt(posX - sizeA));
+					obj1.setY(r.nextInt(posY - sizeB));
+					int a = r.nextInt(sizeA);
+					int b = r.nextInt(sizeB);
+					double rad = Math
+							.sqrt((obj1.getX() - a) * (obj1.getX() - a) + (obj1.getY() - b) * (obj1.getY() - b));
+					obj1.setRad(rad);
+					send(obj1, FormType.ELLIPSE);
+					break;
+				}
+				System.out.println("did something");
+				try {
+					wait(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
+			
 			try {
-				wait(5000);
-			} catch (InterruptedException e) {
+				robotSession.close();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-
-		try {
-			robotSession.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
 	private void send(Rectangle obj, FormType type) {
 		JsonNode readTree;
+		System.out.println("should draw rec");
 		try {
 			readTree = objMapper.readTree(objMapper.writeValueAsString(obj));
 			Message message = translateToJson(type, readTree);
@@ -106,6 +112,7 @@ public class Robot extends Thread {
 
 	private void send(Ellipse obj, FormType type) {
 		JsonNode readTree;
+		System.out.println("should draw ell");
 		try {
 			readTree = objMapper.readTree(objMapper.writeValueAsString(obj));
 			Message message = translateToJson(type, readTree);
@@ -138,10 +145,12 @@ public class Robot extends Thread {
 	public void onOpen(Session session, EndpointConfig endpointConfig) {
 		System.out.println("Robot: Connection opened.");
 		robotSession = session;
+		active = true;
 	}
 
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
 		System.out.println("Robot: Connection closed.");
+		robotSession = null;
 	}
 }

@@ -1,6 +1,7 @@
 var activeElements = [];
 var animatedElements = [];
-var webSocket = new WebSocket('ws://localhost:8080/WebProg2/websocket');
+var webSocket = new WebSocket('ws://localhost:8080/WebProg2/websocket/robot');
+//var webSocket = new WebSocket('ws://195.37.49.24/sos16_01/websocket/robot');
 var isAnimated = false;
 webSocket.onerror = function(event) {
 	onError(event)
@@ -19,7 +20,7 @@ function onOpen(event) {
 }
 
 function onError(event) {
-	alert(event.data);
+	alert(JSON.stringify(event));
 }
 
 function cleanAll() {
@@ -50,7 +51,9 @@ function onMessage(event) {
 	if (obj.type == "HISTORY") {
 		createHistoryObject(obj.content);
 		drawObject(obj.content);
-	} else if (obj.type == "CLEANUP") {
+	} else if (obj.type == "CLEANCANVAS") {
+		cleanCanvas();
+	}else if (obj.type == "CLEANUP") {
 		cleanAll();
 	} else {
 		sendMessageToMessageBox(obj.name + ":" + obj.content);
@@ -80,20 +83,21 @@ function changeAtt(e) {
 }
 
 function animate() {
-	var id = setInterval(frame, 600);
+//	var id = setInterval(frame, 10);
 	function frame() {
 		if (animatedElements.length > 0 && isAnimated) {
 			var text = {
 				ids : animatedElements
 			}
+			sendJSONBack("CLEANCANVAS",null);
 			sendJSONBack("ANIMATE", text);
-			//cleanById(animatedElements);
-			cleanCanvas();
+			window.requestAnimationFrame(frame);
 		} else {
-			clearInterval(id);
+//			clearInterval(id);
 			isAnimated = false;
 		}
 	}
+	window.requestAnimationFrame(frame);
 }
 
 function checkAnimate(e) { // Sideeffect -> nur markierte Objekte werden animiert.

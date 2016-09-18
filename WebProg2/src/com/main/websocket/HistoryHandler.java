@@ -120,6 +120,8 @@ public class HistoryHandler {
 									sna.getbElements()[0] -= 10;
 									break;
 								}
+								sna.getaElements()[0] += 800;
+								sna.getbElements()[0] += 800;
 								sna.getaElements()[0] %= 800;
 								sna.getbElements()[0] %= 800;
 							}

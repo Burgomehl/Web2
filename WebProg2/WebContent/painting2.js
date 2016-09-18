@@ -117,7 +117,11 @@ function Snake(xRoute,yRoute){
 		ctx.beginPath();
 		ctx.moveTo(this.xRoute[0],this.yRoute[0]);
 		for(i = 1; i < this.xRoute.length; ++i){
-			ctx.lineTo(this.xRoute[i],this.yRoute[i]);
+			if(Math.sqrt(Math.pow((this.xRoute[i]-this.xRoute[i-1]),2)+Math.pow((this.yRoute[i]-this.yRoute[i-1]),2))>15){
+				ctx.moveTo(this.xRoute[i],this.yRoute[i]);
+			}else{
+				ctx.lineTo(this.xRoute[i],this.yRoute[i]);
+			}
 		}
 		ctx.stroke();
 	}

@@ -32,7 +32,6 @@ import com.main.messages.forms.FormMessage;
 import com.main.model.History;
 import com.main.websocket.robot.Robot;
 
-@ServerEndpoint(value = "/websocket", encoders = { Encoder.class }, decoders = { Decoder.class })
 public class WebSocket {
 	private ObjectMapper objMapper = new ObjectMapper();
 	private HistoryHandler historyHandler;
@@ -82,6 +81,9 @@ public class WebSocket {
 			historyHandler.animate(objectsToAnimate);
 			resendHistory();
 			break;
+		case CLEANCANVAS:
+			sendCleanCanvas();
+			break;
 		default:
 			System.out.println("hm");
 			break;
@@ -95,13 +97,17 @@ public class WebSocket {
 			sendMessage(m, sessionToSend);
 		}
 	}
-
-	private void sendMessage(Message message, Session sessions) {
-		try {
-			sessions.getBasicRemote().sendObject(message);
-		} catch (IOException | EncodeException e) {
-			e.printStackTrace();
+	
+	private void sendCleanCanvas(){
+		Message m = new Message();
+		m.setType(Type.CLEANCANVAS);
+		for (Session sessionToSend : this.session) {
+			sendMessage(m, sessionToSend);
 		}
+	}
+
+	private synchronized void sendMessage(Message message, Session sessions) {
+			sessions.getAsyncRemote().sendObject(message);
 	}
 
 	@OnOpen
@@ -118,7 +124,7 @@ public class WebSocket {
 		return; //TODO: geht noch nicht.
 //		if (session.size() == 1 && session.size() < 3) {
 //			try {
-//				robo = new Robot(new URI("ws://localhost:8080/WebProg2/websocket"));
+//				robo = new Robot(new URI("ws://localhost:8080/WebProg2/websocket/robot"));
 //			} catch (URISyntaxException e) {
 //				e.printStackTrace();
 //			}
