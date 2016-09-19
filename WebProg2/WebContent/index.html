@@ -18,9 +18,9 @@
 		<tr>
 			<td style="min-width: 300px; max-width: 300px; width: 300px;"></td>
 			<td>
-				<canvas id="testcanvas1" width="800" height="800" class="canvas">
+				<canvas id="testcanvas1" width="800" height="800" class="canvas" tabindex='1'>
                         Dein Browser kann diese Grafik nicht darstellen.
-                    </canvas>
+                </canvas>
 			</td>
 			<td></td>
 		</tr>
@@ -33,12 +33,11 @@
 	<div id="start" class="start">
 		<div class="normal">
 			<h2>Login</h2>
-			<br /> Insert your name <br /> 
-			<input type="text" id="username" />
+			<br /> Insert your name <br /> <input type="text" id="username" />
 			<br />
 			<div onclick="saveUsername()" class="loginbutton">
 				<img src="images/Login.png" class="button" />
-			</div> 
+			</div>
 		</div>
 	</div>
 	<div class="chat">
@@ -47,8 +46,7 @@
 		<div style="width: 100%; height: 20%">
 			<div class="chatIntern">
 				<div id="name"></div>
-				<input type="text" id="userinput" />
-				<br> 
+				<input type="text" id="userinput" /> <br>
 				<div onclick="chatfunction()">
 					<img src="images/ChatOk.png" class="button" />
 				</div>
@@ -56,24 +54,26 @@
 		</div>
 	</div>
 	<div class="hist">
-			<div onclick="location.href='http://localhost:8080/WebProg2/rest/get/history';">
-				<img src="images/LadeJson.png" class="button" />
-			</div>
-			<div onclick="location.href='http://localhost:8080/WebProg2/rest/get/picture';">
-				<img src="images/BildLaden.png" class="button" />
-			</div>
-			<div id="deleteHistory">
-				<img src="images/AlleLöschen.png" class="button" />
-			</div>
-			<div id="deleteObjects" onclick="deleteObjectByIds()">
-				<img src="images/LöscheAusgewählte.png" class="button" />
-			</div>
-			<div onclick="checkAnimate()">
-				<img src="images/Animate.png" class="button" />
-			</div>
-			<div onclick="stopAnimation()">
-				<img src="images/AnimateStop.png" class="button" />
-			</div>
+		<div
+			onclick="location.href='http://localhost:8080/WebProg2/rest/get/history';">
+			<img src="images/LadeJson.png" class="button" />
+		</div>
+		<div
+			onclick="location.href='http://localhost:8080/WebProg2/rest/get/picture';">
+			<img src="images/BildLaden.png" class="button" />
+		</div>
+		<div id="deleteHistory">
+			<img src="images/AlleLöschen.png" class="button" />
+		</div>
+		<div id="deleteObjects" onclick="deleteObjectByIds()">
+			<img src="images/LöscheAusgewählte.png" class="button" />
+		</div>
+		<div onclick="checkAnimate()">
+			<img src="images/Animate.png" class="button" />
+		</div>
+		<div onclick="stopAnimation()">
+			<img src="images/AnimateStop.png" class="button" />
+		</div>
 		<div id="log" class="scroll log" style="margin: 0px; width: 100%;"></div>
 	</div>
 	<div class="bord">
@@ -89,6 +89,9 @@
 			</div>
 			<div onclick="changeShape(3)">
 				<img src="images/Strich.png" class="button" />
+			</div>
+			<div onclick="changeShape(4)">
+				<img src="images/Polygon.png" class="button" />
 			</div>
 			<input type="color" value="#ff0000" id="colorChanger" class="button" />
 		</div>

@@ -1,8 +1,8 @@
-var canvas = document.getElementById('testcanvas1');;
+var canvas = document.getElementById('testcanvas1');
 var ctx = canvas.getContext('2d');
 var color = "rgb(255,0,0)";
 var xRoute = [], yRoute = [];
-var x,y,a,b,actualPosX, actualPosY,shape,active = false;
+var x,y,a,b,actualPosX, actualPosY,shape,active = false,isPolygonActive=false;
 
 if (window.addEventListener) {
 	addEventListener("load", drawCanvas, false);
@@ -21,6 +21,9 @@ if (window.addEventListener) {
 		if(event.key == "Enter"){
 			chatfunction();
 		}
+	}
+	canvas.onmouseover = function(e){
+		canvas.focus();
 	}
 }
 
@@ -116,6 +119,33 @@ function Ellipse(x,y,width,height){
 	}
 }
 
+function Polygon(xRoute,yRoute){
+	this.xRoute = xRoute;
+	this.yRoute = yRoute;
+	this.draw = function(){
+		ctx.beginPath();
+		ctx.moveTo(this.xRoute[0],this.yRoute[0]);
+		for(i = 1; i < this.xRoute.length; ++i){
+				ctx.lineTo(this.xRoute[i],this.yRoute[i]);
+		}
+		ctx.closePath();
+		ctx.stroke();
+	}
+	this.sendJson = function(){
+		var name = document.getElementById("name").textContent;
+		var content = {
+			type : "POLYGON",
+			name : name,
+			content : {
+				color : color,
+				aElements : this.xRoute,
+				bElements : this.yRoute
+			}
+		};
+		sendJSONBack("HISTORY", content);
+	}
+}
+
 function Snake(xRoute,yRoute){
 	this.xRoute = xRoute;
 	this.yRoute = yRoute;
@@ -162,6 +192,23 @@ canvas.onmousemove = function(e) {
 		yRoute.push(actualPosY);
 	}
 }
+canvas.onkeydown = function(e){
+	console.log("onkeydown");
+	if(e.ctrlKey){
+		isPolygonActive = true;
+	}
+}
+canvas.onkeyup = function(e){
+	console.log("onkeyup");
+	if(isPolygonActive){
+		isPolygonActive = false;
+		var pol = new Polygon(xRoute,yRoute);
+		pol.draw();
+		pol.sendJson();
+		xRoute = [];
+		yRoute = [];
+	}
+}
 canvas.onmouseup = function(e) {
 	active = false;
 	a = actualPosX;
@@ -189,6 +236,12 @@ canvas.onmouseup = function(e) {
 		li.draw();
 		li.sendJson();
 		break;
+	case 4:
+		if(isPolygonActive){
+			xRoute.push(actualPosX);
+			yRoute.push(actualPosY);
+		}
+		break;
 	}
 }
 
@@ -212,6 +265,10 @@ function drawObject(obj) {
 	case "LINE":
 		var li = new Line(obj2.a, obj2.b, obj2.x, obj2.y);
 		li.draw();
+		break;
+	case "POLYGON":
+		var pol = new Polygon(obj2.aElements,obj2.bElements);
+		pol.draw();
 		break;
 	}
 }

@@ -12,6 +12,7 @@ import com.main.messages.DeleteMessage;
 import com.main.messages.forms.Ellipse;
 import com.main.messages.forms.FormMessage;
 import com.main.messages.forms.Line;
+import com.main.messages.forms.Polygon;
 import com.main.messages.forms.Rectangle;
 import com.main.messages.forms.Snake;
 import com.main.model.History;
@@ -152,6 +153,20 @@ public class HistoryHandler {
 							formMessage.setContent(readTree);
 						}
 					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					break;
+				case POLYGON:
+					Polygon pol;
+					try{
+						pol = objMapper.readValue(formMessage.getContent(), Polygon.class);
+						for(int i = 0; i < pol.getaElements().length; ++i) {
+							pol.getaElements()[i] = generateNextPosition(pol.getaElements()[i], 0);
+							pol.getbElements()[i] = generateNextPosition(pol.getbElements()[i], 0);
+						}
+						JsonNode readTree = objMapper.readTree(objMapper.writeValueAsString(pol));
+						formMessage.setContent(readTree);
+					}catch(IOException e){
 						e.printStackTrace();
 					}
 					break;
