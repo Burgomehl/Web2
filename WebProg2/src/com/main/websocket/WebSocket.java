@@ -58,7 +58,6 @@ public class WebSocket {
 			FormMessage histObj = objMapper.readValue(message.getContent(), FormMessage.class);
 			histObj.setId(historyHandler.getCurrentId());
 			historyHandler.addHistory(histObj);
-			System.out.println(content);
 			for (Session sessions : this.session) {
 				sendHistoryObject(sessions, histObj);
 			}
@@ -107,7 +106,11 @@ public class WebSocket {
 	}
 
 	private synchronized void sendMessage(Message message, Session sessions) {
-			sessions.getAsyncRemote().sendObject(message);
+			try {
+				sessions.getBasicRemote().sendObject(message);
+			} catch (IOException | EncodeException e) {
+				e.printStackTrace();
+			}
 	}
 
 	@OnOpen

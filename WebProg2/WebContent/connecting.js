@@ -41,7 +41,6 @@ function cleanById(ids) {
 	var myNode = document.getElementById("log");
 	for (i = 0; i < ids.length; ++i) {
 		var nodeToDelete = document.getElementById(ids[i]);
-		console.log(nodeToDelete);
 		myNode.removeChild(nodeToDelete);
 	}
 }

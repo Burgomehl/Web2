@@ -193,13 +193,11 @@ canvas.onmousemove = function(e) {
 	}
 }
 canvas.onkeydown = function(e){
-	console.log("onkeydown");
 	if(e.ctrlKey){
 		isPolygonActive = true;
 	}
 }
 canvas.onkeyup = function(e){
-	console.log("onkeyup");
 	if(isPolygonActive){
 		isPolygonActive = false;
 		var pol = new Polygon(xRoute,yRoute);
