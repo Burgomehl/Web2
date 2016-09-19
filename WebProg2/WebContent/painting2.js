@@ -1,6 +1,6 @@
 var canvas = document.getElementById('testcanvas1');
 var ctx = canvas.getContext('2d');
-var color = "rgb(255,0,0)";
+var color = "#ff0000";
 var xRoute = [], yRoute = [];
 var x,y,a,b,actualPosX, actualPosY,shape,active = false,isPolygonActive=false;
 
