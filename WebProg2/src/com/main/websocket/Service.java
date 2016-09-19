@@ -1,6 +1,7 @@
 package com.main.websocket;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,7 +66,10 @@ public class Service {
 	@Path("/picture")
 	@Produces({ "image/png" })
 	public Response printImage() {
-		BufferedImage image = new BufferedImage(800, 800, 1);
+		BufferedImage image = new BufferedImage(800, 800, BufferedImage.TYPE_INT_RGB);
+		Graphics2D graphic = image.createGraphics();
+		graphic.setBackground(Color.WHITE);
+		graphic.clearRect(0, 0, 800, 800);
 		List<Message> listToSend = new ArrayList<Message>();
 		for (FormMessage hist : historyHandler.getHistory()) {
 			switch (hist.getType()) {
@@ -75,8 +79,9 @@ public class Service {
 					rec = objMapper.readValue(hist.getContent(), Rectangle.class);
 					System.out.println(rec.getColor());
 					String color = rec.getColor();
-					image.getGraphics().setColor(hex2Rgb(color));
-					image.getGraphics().drawRect(rec.getA(), rec.getB(), rec.getX(), rec.getY());
+					graphic.setColor(hex2Rgb(color));
+					
+					graphic.drawRect(rec.getA(), rec.getB(), rec.getX(), rec.getY());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -86,8 +91,8 @@ public class Service {
 				try {
 					ell = objMapper.readValue(hist.getContent(), Ellipse.class);
 					String color = ell.getColor();
-					image.getGraphics().setColor(hex2Rgb(color));
-					image.getGraphics().drawOval(ell.getX()-(int)ell.getRad(), ell.getY()-(int)ell.getRad(), (int)(ell.getRad()*2), (int)(ell.getRad()*2));
+					graphic.setColor(hex2Rgb(color));
+					graphic.drawOval(ell.getX()-(int)ell.getRad(), ell.getY()-(int)ell.getRad(), (int)(ell.getRad()*2), (int)(ell.getRad()*2));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -97,8 +102,8 @@ public class Service {
 				try {
 					li = objMapper.readValue(hist.getContent(), Line.class);
 					String color = li.getColor();
-					image.getGraphics().setColor(hex2Rgb(color));
-					image.getGraphics().drawLine(li.getX(), li.getY(), li.getA(), li.getB());
+					graphic.setColor(hex2Rgb(color));
+					graphic.drawLine(li.getX(), li.getY(), li.getA(), li.getB());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -108,11 +113,11 @@ public class Service {
 				try {
 					pol = objMapper.readValue(hist.getContent(), Polygon.class);
 					String color = pol.getColor();
-					image.getGraphics().setColor(hex2Rgb(color));
+					graphic.setColor(hex2Rgb(color));
 					for(int i = 1; i < pol.getaElements().length; ++i){
-						image.getGraphics().drawLine(pol.getaElements()[i-1], pol.getbElements()[i-1], pol.getaElements()[i], pol.getbElements()[i]);
+						graphic.drawLine(pol.getaElements()[i-1], pol.getbElements()[i-1], pol.getaElements()[i], pol.getbElements()[i]);
 					}
-					image.getGraphics().drawLine(pol.getaElements()[0], pol.getbElements()[0], pol.getaElements()[pol.getaElements().length-1], pol.getbElements()[pol.getbElements().length-1]);
+					graphic.drawLine(pol.getaElements()[0], pol.getbElements()[0], pol.getaElements()[pol.getaElements().length-1], pol.getbElements()[pol.getbElements().length-1]);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -122,9 +127,9 @@ public class Service {
 				try {
 					sna = objMapper.readValue(hist.getContent(), Snake.class);
 					String color = sna.getColor();
-					image.getGraphics().setColor(hex2Rgb(color));
+					graphic.setColor(hex2Rgb(color));
 					for(int i = 1; i < sna.getaElements().length; ++i){
-						image.getGraphics().drawLine(sna.getaElements()[i-1], sna.getbElements()[i-1], sna.getaElements()[i], sna.getbElements()[i]);
+						graphic.drawLine(sna.getaElements()[i-1], sna.getbElements()[i-1], sna.getaElements()[i], sna.getbElements()[i]);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
