@@ -76,9 +76,18 @@ function changeAtt(e) {
 		e.setAttribute("class", "history inActive");
 		var index = activeElements.indexOf(e);
 		activeElements.splice(index, 1);
+		var name = document.getElementById("name").textContent;
+		if(e.innerHTML.indexOf(name) != -1){
+			index = animatedElements.indexOf(e);
+			animatedElements.splice(index, 1);
+		}
 	} else {
 		e.setAttribute("class", "active");
 		activeElements.push(e.getAttribute("id"));
+		var name = document.getElementById("name").textContent;
+		if(e.innerHTML.indexOf(name) != -1){
+			animatedElements.push(e.getAttribute("id"));
+		}
 	}
 }
 
@@ -101,7 +110,6 @@ function animate() {
 }
 
 function checkAnimate(e) { // Sideeffect -> nur markierte Objekte werden animiert.
-	animatedElements = activeElements;
 	if (!isAnimated) {
 		animate();
 		isAnimated = true;
