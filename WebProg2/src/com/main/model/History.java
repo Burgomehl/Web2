@@ -2,6 +2,7 @@ package com.main.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import com.main.messages.forms.FormMessage;
 
@@ -12,7 +13,7 @@ public class History {
 		
 	}
 
-	private List<FormMessage> history = new ArrayList<>();
+	private List<FormMessage> history = new Vector<>();
 
 	public void addHistory(FormMessage m) {
 		history.add(m);

@@ -8,7 +8,6 @@ import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
 import javax.websocket.DeploymentException;
-import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -22,17 +21,20 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.main.coder.Decoder;
+import com.main.coder.Encoder;
 import com.main.messages.Message;
 import com.main.messages.Type;
 import com.main.messages.forms.Ellipse;
 import com.main.messages.forms.FormMessage;
 import com.main.messages.forms.FormType;
+import com.main.messages.forms.Line;
+import com.main.messages.forms.Polygon;
 import com.main.messages.forms.Rectangle;
-import com.main.model.History;
+import com.main.messages.forms.Snake;
 import com.main.websocket.HistoryHandler;
-import com.main.websocket.WebSocket;
 
-@ClientEndpoint
+@ClientEndpoint(encoders = { Encoder.class }, decoders = { Decoder.class })
 public class Robot extends Thread {
 	public static boolean active = false;
 	private int posX = 750, posY = 750;
@@ -58,38 +60,76 @@ public class Robot extends Thread {
 	@Override
 	public void run() {
 		synchronized (this) {
-
+			String color = "#ff0000";
 			Random r = new Random();
 			while (active) {
-				switch (r.nextInt(2)) {
+				switch (r.nextInt(5)) {
 				case 0:
 					Rectangle obj = new Rectangle();
 					obj.setX(r.nextInt(posX - sizeA));
 					obj.setY(r.nextInt(posY - sizeB));
 					obj.setA(r.nextInt(sizeA));
 					obj.setB(r.nextInt(sizeB));
-					send(obj, FormType.RECTANGLE);
+					obj.setColor(color);
+					send(Rectangle.class, obj, FormType.RECTANGLE);
 					break;
 				case 1:
 					Ellipse obj1 = new Ellipse();
 					obj1.setX(r.nextInt(posX - sizeA));
 					obj1.setY(r.nextInt(posY - sizeB));
+					obj1.setColor(color);
 					int a = r.nextInt(sizeA);
 					int b = r.nextInt(sizeB);
 					double rad = Math
 							.sqrt((obj1.getX() - a) * (obj1.getX() - a) + (obj1.getY() - b) * (obj1.getY() - b));
 					obj1.setRad(rad);
-					send(obj1, FormType.ELLIPSE);
+					send(Ellipse.class, obj1, FormType.ELLIPSE);
+					break;
+				case 2:
+					Line li = new Line();
+					li.setX(r.nextInt(posX + sizeA));
+					li.setY(r.nextInt(posY + sizeB));
+					li.setA(r.nextInt(posX + sizeA));
+					li.setB(r.nextInt(posY + sizeB));
+					li.setColor(color);
+					send(Line.class, li, FormType.LINE);
+					break;
+				case 3:
+					Snake sna = new Snake();
+					int length = r.nextInt(90);
+					int[] aElements = new int[length];
+					int[] bElements = new int[length];
+					for (int i = 0; i < aElements.length; ++i) {
+						aElements[i] = r.nextInt(posX + sizeA);
+						bElements[i] = r.nextInt(posY + sizeB);
+					}
+					sna.setaElements(aElements);
+					sna.setbElements(bElements);
+					sna.setColor(color);
+					send(Snake.class, sna, FormType.SNAKE);
+					break;
+				case 4:
+					Polygon pol = new Polygon();
+					int lengthPol = r.nextInt(90);
+					int[] aElementsPol = new int[lengthPol];
+					int[] bElementsPol = new int[lengthPol];
+					for (int i = 0; i < aElementsPol.length; ++i) {
+						aElementsPol[i] = r.nextInt(posX + sizeA);
+						bElementsPol[i] = r.nextInt(posY + sizeB);
+					}
+					pol.setaElements(aElementsPol);
+					pol.setbElements(bElementsPol);
+					pol.setColor(color);
+					send(Polygon.class, pol, FormType.SNAKE);
 					break;
 				}
-				System.out.println("did something");
 				try {
-					wait(5000);
+					wait(10000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-			
+
 			try {
 				robotSession.close();
 			} catch (IOException e) {
@@ -98,29 +138,17 @@ public class Robot extends Thread {
 		}
 	}
 
-	private void send(Rectangle obj, FormType type) {
+	private void send(Class classes, Object obj, FormType type) {
+		String name = "Roboter";
 		JsonNode readTree;
-		System.out.println("should draw rec");
 		try {
-			readTree = objMapper.readTree(objMapper.writeValueAsString(obj));
+			readTree = objMapper.readTree(objMapper.writeValueAsString(classes.cast(obj)));
 			Message message = translateToJson(type, readTree);
+			message.setName(name);
 			this.robotSession.getAsyncRemote().sendObject(message);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-	}
-
-	private void send(Ellipse obj, FormType type) {
-		JsonNode readTree;
-		System.out.println("should draw ell");
-		try {
-			readTree = objMapper.readTree(objMapper.writeValueAsString(obj));
-			Message message = translateToJson(type, readTree);
-			this.robotSession.getAsyncRemote().sendObject(message);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	private Message translateToJson(FormType type, JsonNode readTree)
@@ -137,7 +165,7 @@ public class Robot extends Thread {
 	}
 
 	@OnMessage
-	public void onMessage(String m) {
+	public void onMessage(Message message, Session session) {
 		// nothing
 	}
 

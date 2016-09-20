@@ -55,12 +55,7 @@ public class WebSocket {
 			}
 			break;
 		case HISTORY:
-			FormMessage histObj = objMapper.readValue(message.getContent(), FormMessage.class);
-			histObj.setId(historyHandler.getCurrentId());
-			historyHandler.addHistory(histObj);
-			for (Session sessions : this.session) {
-				sendHistoryObject(sessions, histObj);
-			}
+			gotHistoryMessage(message);
 			break;
 		case DELETE:
 			historyHandler.deleteHistory();
@@ -76,9 +71,7 @@ public class WebSocket {
 			resendHistory();
 			break;
 		case ANIMATE:
-			DeleteMessage objectsToAnimate= objMapper.readValue(content, DeleteMessage.class);
-			historyHandler.animate(objectsToAnimate);
-			resendHistory();
+			gotAnimateMessage(content);
 			break;
 		case CLEANCANVAS:
 			sendCleanCanvas();
@@ -89,6 +82,23 @@ public class WebSocket {
 		}
 	}
 
+	private synchronized void gotAnimateMessage(JsonNode content)
+			throws IOException, JsonParseException, JsonMappingException {
+		DeleteMessage objectsToAnimate = objMapper.readValue(content, DeleteMessage.class);
+		historyHandler.animate(objectsToAnimate);
+		resendHistory();
+	}
+
+	private synchronized void gotHistoryMessage(Message message)
+			throws IOException, JsonParseException, JsonMappingException {
+		FormMessage histObj = objMapper.readValue(message.getContent(), FormMessage.class);
+		histObj.setId(historyHandler.getCurrentId());
+		historyHandler.addHistory(histObj);
+		for (Session sessions : this.session) {
+			sendHistoryObject(sessions, histObj);
+		}
+	}
+
 	private void sendCleanUp() {
 		Message m = new Message();
 		m.setType(Type.CLEANUP);
@@ -96,8 +106,8 @@ public class WebSocket {
 			sendMessage(m, sessionToSend);
 		}
 	}
-	
-	private void sendCleanCanvas(){
+
+	private void sendCleanCanvas() {
 		Message m = new Message();
 		m.setType(Type.CLEANCANVAS);
 		for (Session sessionToSend : this.session) {
@@ -106,11 +116,11 @@ public class WebSocket {
 	}
 
 	private synchronized void sendMessage(Message message, Session sessions) {
-			try {
-				sessions.getBasicRemote().sendObject(message);
-			} catch (IOException | EncodeException e) {
-				e.printStackTrace();
-			}
+		try {
+			sessions.getBasicRemote().sendObject(message);
+		} catch (IOException | EncodeException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@OnOpen
@@ -124,41 +134,39 @@ public class WebSocket {
 	}
 
 	public synchronized void adjustRobot() {
-		return; //TODO: geht noch nicht.
-//		if (session.size() == 1 && session.size() < 3) {
-//			try {
-//				robo = new Robot(new URI("ws://localhost:8080/WebProg2/websocket/robot"));
-//			} catch (URISyntaxException e) {
-//				e.printStackTrace();
-//			}
-//			robo.start();
-//		} else {
-//			if (robo != null) {
-//				robo.setRobotStop();
-//			}
-//		}
+		// return; //TODO: geht noch nicht.
+		if (session.size() == 1 && session.size() < 3) {
+			try {
+				robo = new Robot(new URI("ws://localhost:8080/WebProg2/websocket/robot"));
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			robo.start();
+		} else {
+			if (robo != null) {
+				robo.setRobotStop();
+			}
+		}
 
 	}
 
 	private void resendHistory() {
 		for (Session sessions : this.session) {
-			for (FormMessage hist : historyHandler.getHistory()) {
-				sendHistoryObject(sessions, hist);
+			synchronized (historyHandler.getHistory()) {
+				for (FormMessage hist : historyHandler.getHistory()) {
+					sendHistoryObject(sessions, hist);
+				}
 			}
 		}
 	}
 
 	private void sendHistoryObject(Session sessions, FormMessage hist) {
 		JsonNode readTree;
-		try {
-			readTree = objMapper.readTree(objMapper.writeValueAsString(hist));
-			Message message = new Message();
-			message.setContent(readTree);
-			message.setType(Type.HISTORY);
-			sendMessage(message, sessions);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		readTree = objMapper.valueToTree(hist);
+		Message message = new Message();
+		message.setContent(readTree);
+		message.setType(Type.HISTORY);
+		sendMessage(message, sessions);
 	}
 
 	@OnClose
