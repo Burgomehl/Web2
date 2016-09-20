@@ -66,7 +66,7 @@ public class HistoryHandler {
 		return nextValue;
 	}
 
-	public void animate(DeleteMessage objectsToAnimate) {
+	public synchronized void animate(DeleteMessage objectsToAnimate) {
 		for (String id : objectsToAnimate.getIds()) {
 			synchronized (history.getHistory()) {
 				List<FormMessage> collect = history.getHistory().parallelStream()
@@ -151,6 +151,7 @@ public class HistoryHandler {
 									oldB = tempB;
 								}
 								JsonNode readTree = objMapper.valueToTree(sna);
+								formMessage.setContent(readTree);
 							}
 						} catch (IOException e) {
 							e.printStackTrace();

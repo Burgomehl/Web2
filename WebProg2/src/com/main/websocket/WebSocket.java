@@ -36,7 +36,7 @@ public class WebSocket {
 	private ObjectMapper objMapper = new ObjectMapper();
 	private HistoryHandler historyHandler;
 	private static Set<Session> session = Collections.synchronizedSet(new HashSet<>());
-	private Robot robo;
+	private static Robot robo;
 
 	public WebSocket() {
 		historyHandler = HistoryHandler.getInstance();
@@ -50,8 +50,10 @@ public class WebSocket {
 		switch (message.getType()) {
 		case TEXT:
 			System.out.println("User input: " + content);
-			for (Session sessions : this.session) {
-				sendMessage(message, sessions);
+			synchronized (this.session) {
+				for (Session sessions : this.session) {
+					sendMessage(message, sessions);
+				}
 			}
 			break;
 		case HISTORY:
@@ -82,44 +84,50 @@ public class WebSocket {
 		}
 	}
 
-	private synchronized void gotAnimateMessage(JsonNode content)
-			throws IOException, JsonParseException, JsonMappingException {
+	private void gotAnimateMessage(JsonNode content) throws IOException, JsonParseException, JsonMappingException {
 		DeleteMessage objectsToAnimate = objMapper.readValue(content, DeleteMessage.class);
 		historyHandler.animate(objectsToAnimate);
 		resendHistory();
 	}
 
-	private synchronized void gotHistoryMessage(Message message)
-			throws IOException, JsonParseException, JsonMappingException {
+	private void gotHistoryMessage(Message message) throws IOException, JsonParseException, JsonMappingException {
 		FormMessage histObj = objMapper.readValue(message.getContent(), FormMessage.class);
 		histObj.setId(historyHandler.getCurrentId());
 		historyHandler.addHistory(histObj);
-		for (Session sessions : this.session) {
-			sendHistoryObject(sessions, histObj);
+		synchronized (this.session) {
+			for (Session sessions : this.session) {
+				sendHistoryObject(sessions, histObj);
+			}
 		}
 	}
 
 	private void sendCleanUp() {
 		Message m = new Message();
 		m.setType(Type.CLEANUP);
-		for (Session sessionToSend : this.session) {
-			sendMessage(m, sessionToSend);
+		synchronized (this.session) {
+			for (Session sessionToSend : this.session) {
+				sendMessage(m, sessionToSend);
+			}
 		}
 	}
 
 	private void sendCleanCanvas() {
 		Message m = new Message();
 		m.setType(Type.CLEANCANVAS);
-		for (Session sessionToSend : this.session) {
-			sendMessage(m, sessionToSend);
+		synchronized (this.session) {
+			for (Session sessionToSend : this.session) {
+				sendMessage(m, sessionToSend);
+			}
 		}
 	}
 
-	private synchronized void sendMessage(Message message, Session sessions) {
-		try {
-			sessions.getBasicRemote().sendObject(message);
-		} catch (IOException | EncodeException e) {
-			e.printStackTrace();
+	private void sendMessage(Message message, Session sessions) {
+		synchronized (sessions) {
+			try {
+				sessions.getBasicRemote().sendObject(message);
+			} catch (IOException | EncodeException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -133,28 +141,29 @@ public class WebSocket {
 		System.out.println("Connection opened.");
 	}
 
-	public synchronized void adjustRobot() {
-		// return; //TODO: geht noch nicht.
-		if (session.size() == 1 && session.size() < 3) {
+	public synchronized static void adjustRobot() {
+		if ((session.size() >= 1 && session.size() < 3) && robo == null) {
 			try {
 				robo = new Robot(new URI("ws://localhost:8080/WebProg2/websocket/robot"));
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
 			robo.start();
-		} else {
+		} else if ((session.size() < 1 || session.size() > 3) && robo != null) {
 			if (robo != null) {
 				robo.setRobotStop();
+				robo = null;
 			}
 		}
-
 	}
 
 	private void resendHistory() {
-		for (Session sessions : this.session) {
-			synchronized (historyHandler.getHistory()) {
-				for (FormMessage hist : historyHandler.getHistory()) {
-					sendHistoryObject(sessions, hist);
+		synchronized (this.session) {
+			for (Session sessions : this.session) {
+				synchronized (historyHandler.getHistory()) {
+					for (FormMessage hist : historyHandler.getHistory()) {
+						sendHistoryObject(sessions, hist);
+					}
 				}
 			}
 		}
