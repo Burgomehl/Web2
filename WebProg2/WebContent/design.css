@@ -14,7 +14,7 @@
 }
 
 body {
-	background-color: black;
+	background-color: white;
 }
 
 Canvas:active {
@@ -91,6 +91,7 @@ input[type="button"] {
 .hist {
 	right: 0px;
 	top: 0px;
+	bottom: 10px;
 	height: 100%;
 	width: 600px;
 	max-width: 600px;
@@ -102,6 +103,7 @@ input[type="button"] {
 
 .log {
 	height: 100%;
+	bottom: 10px;
 }
 
 .bord {
