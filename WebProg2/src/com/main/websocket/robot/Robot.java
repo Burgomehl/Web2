@@ -45,9 +45,9 @@ public class Robot extends Thread {
 
 	public Robot(URI endpointURI) throws DeploymentException, IOException {
 
-			WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-			container.connectToServer(this, endpointURI);
-			historyHandler = HistoryHandler.getInstance();
+		WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+		container.connectToServer(this, endpointURI);
+		historyHandler = HistoryHandler.getInstance();
 	}
 
 	public void setRobotStop() {
@@ -93,12 +93,14 @@ public class Robot extends Thread {
 					break;
 				case 3:
 					Snake sna = new Snake();
-					int length = r.nextInt(90);
+					int length = r.nextInt(90)+1;
 					int[] aElements = new int[length];
 					int[] bElements = new int[length];
-					for (int i = 0; i < aElements.length; ++i) {
-						aElements[i] = r.nextInt(posX + sizeA);
-						bElements[i] = r.nextInt(posY + sizeB);
+					aElements[0] = r.nextInt(posX + sizeA);
+					bElements[0] = r.nextInt(posY + sizeB);
+					for (int i = 1; i < aElements.length; ++i) {
+						aElements[i] = aElements[i - 1] + r.nextInt(20) - 10;
+						bElements[i] = bElements[i - 1] + r.nextInt(20) - 10;
 					}
 					sna.setaElements(aElements);
 					sna.setbElements(bElements);
@@ -121,7 +123,7 @@ public class Robot extends Thread {
 					break;
 				}
 				try {
-					wait(10000);
+					wait(60000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

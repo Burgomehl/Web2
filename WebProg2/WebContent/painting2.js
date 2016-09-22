@@ -22,6 +22,11 @@ if (window.addEventListener) {
 			chatfunction();
 		}
 	}
+	document.getElementById("username").onkeyup = function(event){
+		if(event.key == "Enter"){
+			saveUsername();
+		}
+	}
 	canvas.onmouseover = function(e){
 		canvas.focus();
 	}

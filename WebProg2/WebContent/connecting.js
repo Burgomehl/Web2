@@ -1,5 +1,5 @@
 var activeElements = [];
-var animatedElements = [];
+var elementsToAnimate = [], animatedElements = [];
 var webSocket = new WebSocket('ws://localhost:8080/WebProg2/websocket/robot');
 //var webSocket = new WebSocket('ws://195.37.49.24/sos16_01/websocket/robot');
 var isAnimated = false;
@@ -29,6 +29,9 @@ function cleanAll() {
 	while (myNode.firstChild) {
 		myNode.removeChild(myNode.firstChild);
 	}
+	animatedElements = [];
+	elementsToAnimate = [];
+	activeElements = [];
 }
 
 function cleanCanvas() {
@@ -78,15 +81,15 @@ function changeAtt(e) {
 		activeElements.splice(index, 1);
 		var name = document.getElementById("name").textContent;
 		if(e.innerHTML.indexOf(name) != -1){
-			index = animatedElements.indexOf(e);
-			animatedElements.splice(index, 1);
+			index = elementsToAnimate.indexOf(e);
+			elementsToAnimate.splice(index, 1);
 		}
 	} else {
 		e.setAttribute("class", "active");
 		activeElements.push(e.getAttribute("id"));
 		var name = document.getElementById("name").textContent;
 		if(e.innerHTML.indexOf(name) != -1){
-			animatedElements.push(e.getAttribute("id"));
+			elementsToAnimate.push(e.getAttribute("id"));
 		}
 	}
 }
@@ -110,6 +113,16 @@ function animate() {
 }
 
 function checkAnimate(e) { // Sideeffect -> nur markierte Objekte werden animiert.
+	animatedElements = [];
+	console.log(activeElements);
+	for(i = 0; i < elementsToAnimate.length; ++i){
+		var ele = document.getElementById(elementsToAnimate[i]);
+		ele.setAttribute("class", "history animated");
+		animatedElements.push(elementsToAnimate[i]);
+		var index = activeElements.indexOf(ele);
+		activeElements.splice(index, 1);
+	}
+	console.log(activeElements);
 	if (!isAnimated) {
 		animate();
 		isAnimated = true;
