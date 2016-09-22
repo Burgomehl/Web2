@@ -20,7 +20,7 @@ function onOpen(event) {
 }
 
 function onError(event) {
-	alert(JSON.stringify(event));
+	console.log("error: "+event.data);
 }
 
 function cleanAll() {

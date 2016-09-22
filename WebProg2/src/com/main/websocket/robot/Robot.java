@@ -43,14 +43,11 @@ public class Robot extends Thread {
 	private ObjectMapper objMapper = new ObjectMapper();
 	private Session robotSession;
 
-	public Robot(URI endpointURI) {
-		try {
+	public Robot(URI endpointURI) throws DeploymentException, IOException {
+
 			WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 			container.connectToServer(this, endpointURI);
 			historyHandler = HistoryHandler.getInstance();
-		} catch (DeploymentException | IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void setRobotStop() {

@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.CloseReason;
+import javax.websocket.DeploymentException;
 import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
@@ -38,6 +39,8 @@ public class WebSocket {
 	private static Set<Session> session = Collections.synchronizedSet(new HashSet<>());
 	private static Robot robo;
 
+	private final static String url = "ws://localhost:8080/WebProg2/websocket/robot"; // "ws://195.37.49.24/sos16_01/websocket/robot";//
+
 	public WebSocket() {
 		historyHandler = HistoryHandler.getInstance();
 	}
@@ -50,11 +53,7 @@ public class WebSocket {
 		switch (message.getType()) {
 		case TEXT:
 			System.out.println("User input: " + content);
-			synchronized (this.session) {
-				for (Session sessions : this.session) {
-					sendMessage(message, sessions);
-				}
-			}
+			sendToAllSessions(message);
 			break;
 		case HISTORY:
 			gotHistoryMessage(message);
@@ -66,8 +65,10 @@ public class WebSocket {
 			break;
 		case DELETEBYID:
 			DeleteMessage readValue = objMapper.readValue(content, DeleteMessage.class);
-			for (String string : readValue.getIds()) {
-				historyHandler.deleteHistoryItemsById(Long.valueOf(string));
+			synchronized (historyHandler.getHistory()) {
+				for (String string : readValue.getIds()) {
+					historyHandler.deleteHistoryItemsById(Long.valueOf(string));
+				}
 			}
 			sendCleanUp();
 			resendHistory();
@@ -79,33 +80,36 @@ public class WebSocket {
 			sendCleanCanvas();
 			break;
 		default:
-			System.out.println("hm");
 			break;
 		}
 	}
 
 	private void gotAnimateMessage(JsonNode content) throws IOException, JsonParseException, JsonMappingException {
 		DeleteMessage objectsToAnimate = objMapper.readValue(content, DeleteMessage.class);
-		historyHandler.animate(objectsToAnimate);
+		synchronized (historyHandler.getHistory()) {
+			historyHandler.animate(objectsToAnimate);
+		}
 		resendHistory();
 	}
 
 	private void gotHistoryMessage(Message message) throws IOException, JsonParseException, JsonMappingException {
 		FormMessage histObj = objMapper.readValue(message.getContent(), FormMessage.class);
 		histObj.setId(historyHandler.getCurrentId());
-		historyHandler.addHistory(histObj);
-		synchronized (this.session) {
-			for (Session sessions : this.session) {
-				sendHistoryObject(sessions, histObj);
-			}
+		synchronized (historyHandler.getHistory()) {
+			historyHandler.addHistory(histObj);
 		}
+		sendHistoryObject(histObj);
 	}
 
 	private void sendCleanUp() {
 		Message m = new Message();
 		m.setType(Type.CLEANUP);
-		synchronized (this.session) {
-			for (Session sessionToSend : this.session) {
+		sendToAllSessions(m);
+	}
+
+	private void sendToAllSessions(Message m) {
+		synchronized (WebSocket.session) {
+			for (Session sessionToSend : WebSocket.session) {
 				sendMessage(m, sessionToSend);
 			}
 		}
@@ -114,17 +118,13 @@ public class WebSocket {
 	private void sendCleanCanvas() {
 		Message m = new Message();
 		m.setType(Type.CLEANCANVAS);
-		synchronized (this.session) {
-			for (Session sessionToSend : this.session) {
-				sendMessage(m, sessionToSend);
-			}
-		}
+		sendToAllSessions(m);
 	}
 
-	private void sendMessage(Message message, Session sessions) {
-		synchronized (sessions) {
+	private void sendMessage(Message message, Session session) {
+		synchronized (session) {
 			try {
-				sessions.getBasicRemote().sendObject(message);
+				session.getBasicRemote().sendObject(message);
 			} catch (IOException | EncodeException e) {
 				e.printStackTrace();
 			}
@@ -133,19 +133,19 @@ public class WebSocket {
 
 	@OnOpen
 	public void onOpen(Session session, EndpointConfig endpointConfig) {
-		this.session.add(session);
+		System.out.println("Connection opened.");
+		WebSocket.session.add(session);
 		if (historyHandler != null) {
 			resendHistory();
 		}
 		adjustRobot();
-		System.out.println("Connection opened.");
 	}
 
 	public synchronized static void adjustRobot() {
 		if ((session.size() >= 1 && session.size() < 3) && robo == null) {
 			try {
-				robo = new Robot(new URI("ws://localhost:8080/WebProg2/websocket/robot"));
-			} catch (URISyntaxException e) {
+				robo = new Robot(new URI(url));
+			} catch (URISyntaxException | DeploymentException | IOException e) {
 				e.printStackTrace();
 			}
 			robo.start();
@@ -158,30 +158,26 @@ public class WebSocket {
 	}
 
 	private void resendHistory() {
-		synchronized (this.session) {
-			for (Session sessions : this.session) {
-				synchronized (historyHandler.getHistory()) {
-					for (FormMessage hist : historyHandler.getHistory()) {
-						sendHistoryObject(sessions, hist);
-					}
-				}
+		synchronized (historyHandler.getHistory()) {
+			for (FormMessage hist : historyHandler.getHistory()) {
+				sendHistoryObject(hist);
 			}
 		}
 	}
 
-	private void sendHistoryObject(Session sessions, FormMessage hist) {
+	private void sendHistoryObject(FormMessage hist) {
 		JsonNode readTree;
 		readTree = objMapper.valueToTree(hist);
 		Message message = new Message();
 		message.setContent(readTree);
 		message.setType(Type.HISTORY);
-		sendMessage(message, sessions);
+		sendToAllSessions(message);
 	}
 
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
-		this.session.remove(session);
-		adjustRobot();
 		System.out.println("Connection closed.");
+		WebSocket.session.remove(session);
+		adjustRobot();
 	}
 }
