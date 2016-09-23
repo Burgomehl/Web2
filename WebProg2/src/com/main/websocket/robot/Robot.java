@@ -99,8 +99,8 @@ public class Robot extends Thread {
 					aElements[0] = r.nextInt(posX + sizeA);
 					bElements[0] = r.nextInt(posY + sizeB);
 					for (int i = 1; i < aElements.length; ++i) {
-						aElements[i] = aElements[i - 1] + r.nextInt(20) - 10;
-						bElements[i] = bElements[i - 1] + r.nextInt(20) - 10;
+						aElements[i] = aElements[i - 1] + r.nextInt(2) - 1;
+						bElements[i] = bElements[i - 1] + r.nextInt(2) - 1;
 					}
 					sna.setaElements(aElements);
 					sna.setbElements(bElements);
@@ -138,12 +138,10 @@ public class Robot extends Thread {
 	}
 
 	private void send(Class classes, Object obj, FormType type) {
-		String name = "Roboter";
 		JsonNode readTree;
 		try {
 			readTree = objMapper.readTree(objMapper.writeValueAsString(classes.cast(obj)));
 			Message message = translateToJson(type, readTree);
-			message.setName(name);
 			this.robotSession.getAsyncRemote().sendObject(message);
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -156,10 +154,12 @@ public class Robot extends Thread {
 		formMessage.setId(historyHandler.getCurrentId());
 		formMessage.setContent(readTree);
 		formMessage.setType(type);
+		formMessage.setName("Roboter");
 		readTree = objMapper.readTree(objMapper.writeValueAsString(formMessage));
 		Message message = new Message();
 		message.setType(Type.HISTORY);
 		message.setContent(readTree);
+		message.setName("Roboter");
 		return message;
 	}
 

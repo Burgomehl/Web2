@@ -48,22 +48,22 @@ function cleanById(ids) {
 	}
 }
 
-function cleanAfterId(){
+function cleanAfterId() {
 	cleanAfterBeforeSelected("DELETEAFTER");
 }
 
-function cleanBeforeId(){
+function cleanBeforeId() {
 	cleanAfterBeforeSelected("DELETEBEFORE");
 }
 
-function cleanAfterBeforeSelected(type){
-	if(activeElements.length == 1){
+function cleanAfterBeforeSelected(type) {
+	if (activeElements.length == 1) {
 		var text = {
-				id : activeElements[0]
+			id : activeElements[0]
 		}
 		sendJSONBack(type, text);
 		cleanAll();
-	}else{
+	} else {
 		sendMessageToMessageBox("Error: Select just one Element");
 	}
 }
@@ -112,6 +112,25 @@ function changeAtt(e) {
 			elementsToAnimate.push(e.getAttribute("id"));
 		}
 	}
+	var functionA = new function(){
+		return false;
+	}
+	var functionB = functionA;
+	for(i = 0; i < activeElements.length; ++i){
+		var ele = document.getElementById(activeElements);
+		if(ele != null){
+			if (ele.innerHTML.indexOf(name) == -1) {
+				functionA = new function(){
+					checkAnimate()
+				}
+				functionB = new function(){
+					stopAnimation();
+				}
+			}
+		}
+	}
+	document.getElementById("StartAnimation").onmousedown = functionA;
+	document.getElementById("StopAnimation").onmousedown = functionB;
 }
 
 function animate() {
@@ -169,8 +188,11 @@ function createHistoryObject(content) {
 				+ content.type));
 		if (content.animated) {
 			div.setAttribute("class", "history inActive animated");
-			elementsToAnimate.push(JSON.stringify(content.id));
-			checkAnimate();
+			if (document.getElementById("username").textContent == JSON
+					.stringify(content.name)) {
+				elementsToAnimate.push(JSON.stringify(content.id));
+				checkAnimate();
+			}
 		} else {
 			div.setAttribute("class", "history inActive");
 		}
