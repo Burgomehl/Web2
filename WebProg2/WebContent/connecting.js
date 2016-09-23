@@ -48,6 +48,26 @@ function cleanById(ids) {
 	}
 }
 
+function cleanAfterId(){
+	cleanAfterBeforeSelected("DELETEAFTER");
+}
+
+function cleanBeforeId(){
+	cleanAfterBeforeSelected("DELETEBEFORE");
+}
+
+function cleanAfterBeforeSelected(type){
+	if(activeElements.length == 1){
+		var text = {
+				id : activeElements[0]
+		}
+		sendJSONBack(type, text);
+		cleanAll();
+	}else{
+		sendMessageToMessageBox("Error: Select just one Element");
+	}
+}
+
 function onMessage(event) {
 	var obj = JSON.parse(event.data);
 	if (obj.type == "HISTORY") {
@@ -113,7 +133,6 @@ function animate() {
 }
 
 function checkAnimate(e) {
-	console.log(activeElements);
 	for (i = 0; i < elementsToAnimate.length; ++i) {
 		var ele = document.getElementById(elementsToAnimate[i]);
 		if (ele != null) {

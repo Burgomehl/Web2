@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.main.messages.DeleteAfterBeforeMessage;
 import com.main.messages.DeleteMessage;
 import com.main.messages.forms.Ellipse;
 import com.main.messages.forms.FormMessage;
@@ -193,6 +194,20 @@ public class HistoryHandler {
 					}
 				}
 			}
+		}
+	}
+
+	public void deleteAfter(DeleteAfterBeforeMessage objectsToDeleteAfter) {
+		synchronized (history.getHistory()) {
+			List<FormMessage> hist = history.getHistory();
+			hist.removeIf(e -> e.getId() > Long.valueOf(objectsToDeleteAfter.getId()));
+		}
+	}
+
+	public void deleteBefore(DeleteAfterBeforeMessage objectsToDeleteBefore) {
+		synchronized (history.getHistory()) {
+			List<FormMessage> hist = history.getHistory();
+			hist.removeIf(e -> e.getId() < Long.valueOf(objectsToDeleteBefore.getId()));
 		}
 	}
 }

@@ -26,6 +26,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.main.coder.Decoder;
 import com.main.coder.Encoder;
+import com.main.messages.DeleteAfterBeforeMessage;
 import com.main.messages.DeleteMessage;
 import com.main.messages.Message;
 import com.main.messages.Type;
@@ -78,6 +79,22 @@ public class WebSocket {
 			break;
 		case CLEANCANVAS:
 			sendCleanCanvas();
+			break;
+		case CLEANUP:
+			break;
+		case DELETEAFTER:
+			DeleteAfterBeforeMessage objectsToDeleteAfter = objMapper.readValue(content, DeleteAfterBeforeMessage.class);
+			synchronized (historyHandler.getHistory()) {
+				historyHandler.deleteAfter(objectsToDeleteAfter);
+			}
+			resendHistory();
+			break;
+		case DELETEBEFORE:
+			DeleteAfterBeforeMessage objectsToDeleteBefore = objMapper.readValue(content, DeleteAfterBeforeMessage.class);
+			synchronized (historyHandler.getHistory()) {
+				historyHandler.deleteBefore(objectsToDeleteBefore);
+			}
+			resendHistory();
 			break;
 		default:
 			break;
