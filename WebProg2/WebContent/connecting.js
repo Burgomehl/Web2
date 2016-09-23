@@ -125,7 +125,6 @@ function checkAnimate(e) {
 		isAnimated = true;
 		animate();
 	}
-	console.log(activeElements+"/Animated/"+animatedElements+"/ToAnimate/"+elementsToAnimate+" animated: "+isAnimated);
 	activeElements = [];
 	elementsToAnimate = [];
 }
