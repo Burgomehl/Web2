@@ -2,7 +2,7 @@ var canvas = document.getElementById('testcanvas1');
 var ctx = canvas.getContext('2d');
 var color = "#ff0000";
 var xRoute = [], yRoute = [];
-var x,y,a,b,actualPosX, actualPosY,shape,active = false,isPolygonActive=false;
+var x, y, a, b, actualPosX, actualPosY, shape, active = false, isPolygonActive = false;
 
 if (window.addEventListener) {
 	addEventListener("load", drawCanvas, false);
@@ -12,28 +12,27 @@ if (window.addEventListener) {
 				cleanAll();
 			}, false);
 	document.getElementById("colorChanger").addEventListener('change',
-			function(){
-		color = document.getElementById("colorChanger").value;
-		ctx.fillStyle = color;
-		ctx.strokeStyle = color;
-	}, false);
-	document.getElementById("userinput").onkeyup = function(event){
-		if(event.key == "Enter"){
+			function() {
+				color = document.getElementById("colorChanger").value;
+				ctx.fillStyle = color;
+				ctx.strokeStyle = color;
+			}, false);
+	document.getElementById("userinput").onkeyup = function(event) {
+		if (event.key == "Enter") {
 			chatfunction();
 		}
 	}
-	document.getElementById("username").onkeyup = function(event){
-		if(event.key == "Enter"){
+	document.getElementById("username").onkeyup = function(event) {
+		if (event.key == "Enter") {
 			saveUsername();
 		}
 	}
-	canvas.onmouseover = function(e){
+	canvas.onmouseover = function(e) {
 		canvas.focus();
 	}
 }
 
-
-function drawCanvas(){
+function drawCanvas() {
 	ctx.fillStyle = color;
 	ctx.strokeStyle = color;
 }
@@ -42,22 +41,23 @@ function changeShape(i) {
 	shape = i;
 }
 
-function Line(x,y,width,height){
+function Line(x, y, width, height) {
 	this.x = x;
 	this.y = y;
 	this.a = width;
 	this.b = height;
-	this.draw = function(){
+	this.draw = function() {
 		ctx.beginPath();
-		ctx.moveTo(this.x,this.y);
-		ctx.lineTo(this.a,this.b);
+		ctx.moveTo(this.x, this.y);
+		ctx.lineTo(this.a, this.b);
 		ctx.stroke();
 	}
-	this.sendJson = function(){
+	this.sendJson = function() {
 		var name = document.getElementById("name").textContent;
 		var content = {
 			type : "LINE",
 			name : name,
+			animated : false,
 			content : {
 				color : color,
 				x : this.x,
@@ -70,19 +70,20 @@ function Line(x,y,width,height){
 	}
 }
 
-function Rectangle(x,y,width,height){
+function Rectangle(x, y, width, height) {
 	this.x = x;
 	this.y = y;
 	this.a = width;
 	this.b = height;
-	this.draw = function(){
-		ctx.strokeRect(this.x,this.y,this.a-this.x,this.b-this.y);
+	this.draw = function() {
+		ctx.strokeRect(this.x, this.y, this.a - this.x, this.b - this.y);
 	}
-	this.sendJson = function(){
+	this.sendJson = function() {
 		var name = document.getElementById("name").textContent;
 		var content = {
 			type : "RECTANGLE",
 			name : name,
+			animated : false,
 			content : {
 				color : color,
 				x : this.x,
@@ -95,22 +96,25 @@ function Rectangle(x,y,width,height){
 	}
 }
 
-function Ellipse(x,y,width,height){
+function Ellipse(x, y, width, height) {
 	this.x = x;
 	this.y = y;
 	this.a = width;
 	this.b = height;
-	this.draw = function(){
+	this.draw = function() {
 		ctx.beginPath();
-		ctx.arc(this.x, this.y, Math.sqrt((this.x - this.a) * (this.x - this.a) + (this.y - this.b)* (this.y - this.b)), 0, 2 * Math.PI, true);
+		ctx.arc(this.x, this.y, Math.sqrt((this.x - this.a) * (this.x - this.a)
+				+ (this.y - this.b) * (this.y - this.b)), 0, 2 * Math.PI, true);
 		ctx.stroke();
 	}
-	this.sendJson = function(){
+	this.sendJson = function() {
 		var name = document.getElementById("name").textContent;
-		var rad = Math.sqrt((this.x - this.a) * (this.x - this.a) + (this.y - this.b) * (this.y - this.b));
+		var rad = Math.sqrt((this.x - this.a) * (this.x - this.a)
+				+ (this.y - this.b) * (this.y - this.b));
 		var content = {
 			type : "ELLIPSE",
 			name : name,
+			animated : false,
 			content : {
 				color : color,
 				x : this.x,
@@ -124,23 +128,24 @@ function Ellipse(x,y,width,height){
 	}
 }
 
-function Polygon(xRoute,yRoute){
+function Polygon(xRoute, yRoute) {
 	this.xRoute = xRoute;
 	this.yRoute = yRoute;
-	this.draw = function(){
+	this.draw = function() {
 		ctx.beginPath();
-		ctx.moveTo(this.xRoute[0],this.yRoute[0]);
-		for(i = 1; i < this.xRoute.length; ++i){
-				ctx.lineTo(this.xRoute[i],this.yRoute[i]);
+		ctx.moveTo(this.xRoute[0], this.yRoute[0]);
+		for (i = 1; i < this.xRoute.length; ++i) {
+			ctx.lineTo(this.xRoute[i], this.yRoute[i]);
 		}
 		ctx.closePath();
 		ctx.stroke();
 	}
-	this.sendJson = function(){
+	this.sendJson = function() {
 		var name = document.getElementById("name").textContent;
 		var content = {
 			type : "POLYGON",
 			name : name,
+			animated : false,
 			content : {
 				color : color,
 				aElements : this.xRoute,
@@ -151,26 +156,28 @@ function Polygon(xRoute,yRoute){
 	}
 }
 
-function Snake(xRoute,yRoute){
+function Snake(xRoute, yRoute) {
 	this.xRoute = xRoute;
 	this.yRoute = yRoute;
-	this.draw = function(){
+	this.draw = function() {
 		ctx.beginPath();
-		ctx.moveTo(this.xRoute[0],this.yRoute[0]);
-		for(i = 1; i < this.xRoute.length; ++i){
-			if(Math.sqrt(Math.pow((this.xRoute[i]-this.xRoute[i-1]),2)+Math.pow((this.yRoute[i]-this.yRoute[i-1]),2))>700){
-				ctx.moveTo(this.xRoute[i],this.yRoute[i]);
-			}else{
-				ctx.lineTo(this.xRoute[i],this.yRoute[i]);
+		ctx.moveTo(this.xRoute[0], this.yRoute[0]);
+		for (i = 1; i < this.xRoute.length; ++i) {
+			if (Math.sqrt(Math.pow((this.xRoute[i] - this.xRoute[i - 1]), 2)
+					+ Math.pow((this.yRoute[i] - this.yRoute[i - 1]), 2)) > 700) {
+				ctx.moveTo(this.xRoute[i], this.yRoute[i]);
+			} else {
+				ctx.lineTo(this.xRoute[i], this.yRoute[i]);
 			}
 		}
 		ctx.stroke();
 	}
-	this.sendJson = function(){
+	this.sendJson = function() {
 		var name = document.getElementById("name").textContent;
 		var content = {
 			type : "SNAKE",
 			name : name,
+			animated : false,
 			content : {
 				color : color,
 				aElements : this.xRoute,
@@ -184,28 +191,30 @@ function Snake(xRoute,yRoute){
 canvas.onmousedown = function(e) {
 	x = actualPosX;
 	y = actualPosY;
-	if(shape == 0){
+	if (shape == 0) {
 		active = true;
 	}
 }
-canvas.onmousemove = function(e) { 
+canvas.onmousemove = function(e) {
 	var rect = canvas.getBoundingClientRect();
-	actualPosX = e.clientX - canvas.offsetLeft - rect.left + document.body.scrollLeft;
-	actualPosY = e.clientY - canvas.offsetTop - rect.top + document.body.scrollTop;	
-	if(active){
+	actualPosX = e.clientX - canvas.offsetLeft - rect.left
+			+ document.body.scrollLeft;
+	actualPosY = e.clientY - canvas.offsetTop - rect.top
+			+ document.body.scrollTop;
+	if (active) {
 		xRoute.push(actualPosX);
 		yRoute.push(actualPosY);
 	}
 }
-canvas.onkeydown = function(e){
-	if(e.ctrlKey){
+canvas.onkeydown = function(e) {
+	if (e.ctrlKey) {
 		isPolygonActive = true;
 	}
 }
-canvas.onkeyup = function(e){
-	if(isPolygonActive){
+canvas.onkeyup = function(e) {
+	if (isPolygonActive) {
 		isPolygonActive = false;
-		var pol = new Polygon(xRoute,yRoute);
+		var pol = new Polygon(xRoute, yRoute);
 		pol.draw();
 		pol.sendJson();
 		xRoute = [];
@@ -216,31 +225,31 @@ canvas.onmouseup = function(e) {
 	active = false;
 	a = actualPosX;
 	b = actualPosY;
-	switch(shape){
+	switch (shape) {
 	case 0:
-		var sna = new Snake(xRoute,yRoute);
+		var sna = new Snake(xRoute, yRoute);
 		sna.draw();
 		sna.sendJson();
 		xRoute = [];
 		yRoute = [];
 		break;
 	case 1:
-		var rec = new Rectangle(x,y,a,b);
+		var rec = new Rectangle(x, y, a, b);
 		rec.draw();
 		rec.sendJson();
 		break;
 	case 2:
-		var ell = new Ellipse(x,y,a,b);
+		var ell = new Ellipse(x, y, a, b);
 		ell.draw();
 		ell.sendJson();
 		break;
 	case 3:
-		var li = new Line(x,y,a,b);
+		var li = new Line(x, y, a, b);
 		li.draw();
 		li.sendJson();
 		break;
 	case 4:
-		if(isPolygonActive){
+		if (isPolygonActive) {
 			xRoute.push(actualPosX);
 			yRoute.push(actualPosY);
 		}
@@ -262,7 +271,7 @@ function drawObject(obj) {
 		ell.draw();
 		break;
 	case "SNAKE":
-		var sna = new Snake(obj2.aElements,obj2.bElements);
+		var sna = new Snake(obj2.aElements, obj2.bElements);
 		sna.draw();
 		break;
 	case "LINE":
@@ -270,9 +279,8 @@ function drawObject(obj) {
 		li.draw();
 		break;
 	case "POLYGON":
-		var pol = new Polygon(obj2.aElements,obj2.bElements);
+		var pol = new Polygon(obj2.aElements, obj2.bElements);
 		pol.draw();
 		break;
 	}
 }
-

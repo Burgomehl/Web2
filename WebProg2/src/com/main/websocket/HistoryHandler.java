@@ -1,6 +1,7 @@
 package com.main.websocket;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ public class HistoryHandler {
 	private Random r = new Random();
 	private int maxSizeX = 800;
 	private int maxSizeY = 800;
+	public static List<String> lastAnimatedElements = new ArrayList<>();
 
 	private HistoryHandler() {
 		history = new History();
@@ -67,11 +69,28 @@ public class HistoryHandler {
 	}
 
 	public synchronized void animate(DeleteMessage objectsToAnimate) {
+		synchronized (lastAnimatedElements) {
+			if (!lastAnimatedElements.isEmpty() || !lastAnimatedElements.containsAll(objectsToAnimate.getIds())) {
+				lastAnimatedElements.removeAll(objectsToAnimate.getIds());
+				for (String id : lastAnimatedElements) {
+					synchronized (history.getHistory()) {
+						List<FormMessage> collect = history.getHistory().parallelStream()
+								.filter(e -> e.getId() == Long.valueOf(id)).collect(Collectors.toList());
+						for (FormMessage formMessage : collect) {
+							formMessage.setAnimated(false);
+						}
+					}
+				}
+			}
+			lastAnimatedElements = objectsToAnimate.getIds();
+		}
+
 		for (String id : objectsToAnimate.getIds()) {
 			synchronized (history.getHistory()) {
 				List<FormMessage> collect = history.getHistory().parallelStream()
 						.filter(e -> e.getId() == Long.valueOf(id)).collect(Collectors.toList());
 				for (FormMessage formMessage : collect) {
+					formMessage.setAnimated(true);
 					switch (formMessage.getType()) {
 					case RECTANGLE:
 						Rectangle rec;

@@ -5,8 +5,17 @@ import org.codehaus.jackson.JsonNode;
 public class FormMessage {
 	private FormType type;
 	private String name;
+	private boolean animated;
 	private JsonNode content;
 	private long id;
+
+	public boolean isAnimated() {
+		return animated;
+	}
+
+	public void setAnimated(boolean animated) {
+		this.animated = animated;
+	}
 
 	public FormType getType() {
 		return type;

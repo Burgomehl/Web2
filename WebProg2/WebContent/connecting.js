@@ -1,7 +1,7 @@
 var activeElements = [];
 var elementsToAnimate = [], animatedElements = [];
 var webSocket = new WebSocket('ws://localhost:8080/WebProg2/websocket/robot');
-//var webSocket = new WebSocket('ws://195.37.49.24/sos16_01/websocket/robot');
+// var webSocket = new WebSocket('ws://195.37.49.24/sos16_01/websocket/robot');
 var isAnimated = false;
 webSocket.onerror = function(event) {
 	onError(event)
@@ -20,7 +20,7 @@ function onOpen(event) {
 }
 
 function onError(event) {
-	console.log("error: "+event.data);
+	console.log("error: " + event.data);
 }
 
 function cleanAll() {
@@ -55,7 +55,7 @@ function onMessage(event) {
 		drawObject(obj.content);
 	} else if (obj.type == "CLEANCANVAS") {
 		cleanCanvas();
-	}else if (obj.type == "CLEANUP") {
+	} else if (obj.type == "CLEANUP") {
 		cleanAll();
 	} else {
 		sendMessageToMessageBox(obj.name + ":" + obj.content);
@@ -77,72 +77,85 @@ function chatfunction() {
 function changeAtt(e) {
 	if (e.classList.contains("active")) {
 		e.setAttribute("class", "history inActive");
-		var index = activeElements.indexOf(e);
+		var index = activeElements.indexOf(e.getAttribute("id"));
 		activeElements.splice(index, 1);
 		var name = document.getElementById("name").textContent;
-		if(e.innerHTML.indexOf(name) != -1){
-			index = elementsToAnimate.indexOf(e);
+		if (e.innerHTML.indexOf(name) != -1) {
+			index = elementsToAnimate.indexOf(e.getAttribute("id"));
 			elementsToAnimate.splice(index, 1);
 		}
 	} else {
 		e.setAttribute("class", "active");
 		activeElements.push(e.getAttribute("id"));
 		var name = document.getElementById("name").textContent;
-		if(e.innerHTML.indexOf(name) != -1){
+		if (e.innerHTML.indexOf(name) != -1) {
 			elementsToAnimate.push(e.getAttribute("id"));
 		}
 	}
 }
 
 function animate() {
-//	var id = setInterval(frame, 10);
+	// var id = setInterval(frame, 10);
 	function frame() {
 		if (animatedElements.length > 0 && isAnimated) {
 			var text = {
 				ids : animatedElements
 			}
-			sendJSONBack("CLEANCANVAS",null);
+			sendJSONBack("CLEANCANVAS", null);
 			sendJSONBack("ANIMATE", text);
 			window.requestAnimationFrame(frame);
 		} else {
-//			clearInterval(id);
+			// clearInterval(id);
 			isAnimated = false;
 		}
 	}
 	window.requestAnimationFrame(frame);
 }
 
-function checkAnimate(e) { // Sideeffect -> nur markierte Objekte werden animiert.
-	animatedElements = [];
+function checkAnimate(e) {
 	console.log(activeElements);
-	for(i = 0; i < elementsToAnimate.length; ++i){
+	for (i = 0; i < elementsToAnimate.length; ++i) {
 		var ele = document.getElementById(elementsToAnimate[i]);
-		ele.setAttribute("class", "history animated");
+		if (ele != null) {
+			ele.setAttribute("class", "history animated");
+		}
 		animatedElements.push(elementsToAnimate[i]);
-		var index = activeElements.indexOf(ele);
-		activeElements.splice(index, 1);
 	}
-	console.log(activeElements);
 	if (!isAnimated) {
-		animate();
 		isAnimated = true;
+		animate();
 	}
+	console.log(activeElements+"/Animated/"+animatedElements+"/ToAnimate/"+elementsToAnimate+" animated: "+isAnimated);
+	activeElements = [];
+	elementsToAnimate = [];
 }
 
-function stopAnimation(){
-	animatedElements = [];
-	isAnimated = false;
+function stopAnimation() {
+	for (i = 0; i < activeElements.length; ++i) {
+		var ele = document.getElementById(activeElements[i]);
+		ele.setAttribute("class", "history inActive");
+		var index = animatedElements.indexOf(activeElements[i]);
+		animatedElements.splice(index, 1);
+	}
+	elementsToAnimate = [];
+	activeElements = [];
 }
 
 function createHistoryObject(content) {
 	if (document.getElementById(JSON.stringify(content.id)) == undefined) {
 		var div = document.createElement("div");
 		div.setAttribute("onclick", "changeAtt(this)");
-		div.setAttribute("class", "history inActive");
 		div.setAttribute("id", JSON.stringify(content.id));
 		var text = JSON.stringify(content.content);
 		div.appendChild(document.createTextNode(content.name + ":" + text + ":"
 				+ content.type));
+		if (content.animated) {
+			div.setAttribute("class", "history inActive animated");
+			elementsToAnimate.push(JSON.stringify(content.id));
+			checkAnimate();
+		} else {
+			div.setAttribute("class", "history inActive");
+		}
 		document.getElementById("log").appendChild(div);
 	}
 }
@@ -169,11 +182,11 @@ function sendJSONBack(type, content) {
 
 function saveUsername() {
 	var username = document.getElementById("username").value;
-	if(username != ""){
+	if (username != "") {
 		var userNode = document.createTextNode(username);
 		document.getElementById("name").appendChild(userNode);
 		document.getElementById("start").style.visibility = "hidden";
-	}else{
+	} else {
 		alert("Nutzernamen eingeben");
 	}
 }
