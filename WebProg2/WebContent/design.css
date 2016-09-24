@@ -9,7 +9,6 @@
 	top: 10px;
 	position: relative;
 	height: 100%;
-	width: 100%;
 }
 
 .history:hover {
@@ -19,6 +18,11 @@
 
 .active {
 	background-color: red;
+	border: 4px solid #666;
+}
+
+.animated{
+	background-color: #00ff00;
 	border: 4px solid #666;
 }
 
@@ -35,7 +39,7 @@ Canvas:active {
 }
 
 .start {
-	position: absolute;
+	position: fixed;
 	background-color: grey;
 	left: 0px;
 	top: 0px;
@@ -60,7 +64,7 @@ Canvas:active {
 	height: 100%;
 	width: 300px;
 	max-width: 300px;
-	position: fixed;
+	position: absolute;
 	border-right: 4px;
 	border-right-style: solid;
 	color: black;
@@ -76,11 +80,10 @@ Canvas:active {
 	padding-left: 50px;
 }
 
-input[type="button"] {
+input[type="color"] {
 	min-width: 70px;
 	height: 50px;
-	color: aqua;
-	background-color: black;
+	background-color: white;
 }
 
 .button {
@@ -99,23 +102,19 @@ input[type="button"] {
 }
 
 .hist {
-	right: 0px;
+	left:1220px;
 	top: 0px;
-	bottom: 10px;
 	height: 100%;
 	width: 600px;
-	max-width: 600px;
-	position: fixed;
+	position: absolute;
 	border-left: 4px;
 	border-left-style: solid;
-	height: 100%;
 }
 
 .log {
-	height: 100%;
 	bottom: 10px;
-	position: relative;
-	top: 10px;
+	position: absolute;
+	top: 60px;
 }
 
 .bord {
@@ -126,12 +125,20 @@ input[type="button"] {
 	height: 100px;
 	width: 900px;
 	max-width: 900px;
-	position: fixed;
+	position: absolute;
 	border-bottom: 4px;
 	border-bottom-style: solid;
 	border-right-style: solid;
 	border-left-style: solid;
 	z-index: 5;
+}
+
+.canvasDiv{
+	width: 800px;
+	height: 800px;
+	position: absolute;
+	top: 120px;
+	left: 350px;	
 }
 
 .menu {

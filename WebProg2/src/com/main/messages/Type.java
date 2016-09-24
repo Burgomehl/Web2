@@ -9,5 +9,6 @@ public enum Type {
 	DELETEAFTER,//
 	CLEANUP,//
 	ANIMATE,//
-	CLEANCANVAS//
+	CLEANCANVAS,//
+	LOGEDIN
 }

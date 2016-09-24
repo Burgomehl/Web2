@@ -23,7 +23,6 @@ import com.main.messages.forms.Line;
 import com.main.messages.forms.Polygon;
 import com.main.messages.forms.Rectangle;
 import com.main.messages.forms.Snake;
-import com.main.model.History;
 
 @Path("/get")
 public class Service {
@@ -70,7 +69,6 @@ public class Service {
 		Graphics2D graphic = image.createGraphics();
 		graphic.setBackground(Color.WHITE);
 		graphic.clearRect(0, 0, 800, 800);
-		List<Message> listToSend = new ArrayList<Message>();
 		for (FormMessage hist : historyHandler.getHistory()) {
 			switch (hist.getType()) {
 			case RECTANGLE:

@@ -71,7 +71,7 @@ public class WebSocket {
 					historyHandler.deleteHistoryItemsById(Long.valueOf(string));
 				}
 			}
-			sendCleanUp();
+			sendCleanCanvas();
 			resendHistory();
 			break;
 		case ANIMATE:
@@ -87,6 +87,7 @@ public class WebSocket {
 			synchronized (historyHandler.getHistory()) {
 				historyHandler.deleteAfter(objectsToDeleteAfter);
 			}
+			sendCleanUp();
 			resendHistory();
 			break;
 		case DELETEBEFORE:
@@ -94,7 +95,13 @@ public class WebSocket {
 			synchronized (historyHandler.getHistory()) {
 				historyHandler.deleteBefore(objectsToDeleteBefore);
 			}
+			sendCleanUp();
 			resendHistory();
+			break;
+		case LOGEDIN:
+			if (historyHandler != null) {
+				resendHistory();
+			}
 			break;
 		default:
 			break;
@@ -152,9 +159,6 @@ public class WebSocket {
 	public void onOpen(Session session, EndpointConfig endpointConfig) {
 		System.out.println("Connection opened.");
 		WebSocket.session.add(session);
-		if (historyHandler != null) {
-			resendHistory();
-		}
 		adjustRobot();
 	}
 

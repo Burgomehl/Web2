@@ -93,7 +93,7 @@ public class Robot extends Thread {
 					break;
 				case 3:
 					Snake sna = new Snake();
-					int length = r.nextInt(90)+1;
+					int length = r.nextInt(20)+1;
 					int[] aElements = new int[length];
 					int[] bElements = new int[length];
 					aElements[0] = r.nextInt(posX + sizeA);

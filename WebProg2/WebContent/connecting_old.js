@@ -35,13 +35,13 @@ function cleanAll() { // conflict ?
 	activeElements = [];
 }
 
-function cleanCanvas() {
+function cleanCanvas() {// conflict ?
 	var canvas = document.getElementById('testcanvas1');
 	var context = canvas.getContext('2d');
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function cleanById(ids) {
+function cleanById(ids) {// conflict ?
 	var myNode = document.getElementById("log");
 	for (i = 0; i < ids.length; ++i) {
 		var nodeToDelete = document.getElementById(ids[i]);
@@ -95,7 +95,7 @@ function chatfunction() {
 	return false;
 }
 
-function changeAtt(e) {
+function changeAtt(e) { // conflict!!!
 	if (e.classList.contains("active")) {
 		if (animatedElements.indexOf(e.getAttribute("id")) != -1) {
 			console.log("start " + animatedElements + " id "
@@ -132,8 +132,6 @@ function animate() { // conflict ?
 			sendJSONBack("ANIMATE", text);
 			animatedFrameContext = window.requestAnimationFrame(frame);
 		} else {
-			console.log("darf ich hier beenden ? " + isAnimated + " "
-					+ animatedElements.length);
 			isAnimated = false;
 			window.cancelAnimationFrame(animatedFrameContext);
 		}
@@ -142,21 +140,17 @@ function animate() { // conflict ?
 }
 
 function checkAnimate(e) { // conflict ?
-	console.log("try to animated this objects "+ elementsToAnimate);
 	elementsToAnimate = elementsToAnimate.filter(function(x) {
 		return animatedElements.indexOf(x) < 0
 	})
-	console.log("elments left "+ elementsToAnimate);
 	for (i = 0; i < elementsToAnimate.length; ++i) {
 		var ele = document.getElementById(elementsToAnimate[i]);
 		if (ele != null) {
 			ele.setAttribute("class", "history animated");
 		}
-		console.log("push element to animated "+ elementsToAnimate[i]);
 		animatedElements.push(elementsToAnimate[i]);
 	}
 	if (!isAnimated) {
-		console.log("go animation go");
 		isAnimated = true;
 		animate();
 	}
@@ -175,35 +169,40 @@ function stopAnimation() { // may conflict
 	activeElements = [];
 }
 
-function createHistoryObject(content) {
+function createHistoryObject(content) { // may conflict
 	if (document.getElementById(JSON.stringify(content.id)) == undefined) {
 		var div = document.createElement("div");
 		div.setAttribute("onclick", "changeAtt(this)");
 		div.setAttribute("id", JSON.stringify(content.id));
-		div.appendChild(document.createTextNode(content.name + ":" + content.type));
-		document.getElementById("log").appendChild(div);
-		if(content.animated){
-			console.log("animated "+ document.getElementById("name").textContent+" / "+ content.name);
+		var text = JSON.stringify(content.content);
+		div.appendChild(document.createTextNode(content.name + ":" + text + ":"
+				+ content.type));
+		if (content.animated) {
 			div.setAttribute("class", "history inActive animated");
-			if (document.getElementById("name").textContent == content.name) {
-				console.log("go animation "+ JSON.stringify(content.id));
+			if (document.getElementById("username").textContent == JSON
+					.stringify(content.name)) {
 				elementsToAnimate.push(JSON.stringify(content.id));
 				checkAnimate();
 			}
-		}else {
+		} else {
 			div.setAttribute("class", "history inActive");
 		}
+		document.getElementById("log").appendChild(div);
+	} else if (animatedElements.length > 0) {
+		elementsToAnimate = [];
+		checkAnimate();
 	}
 }
 
-function deleteObjectByIds() {
+function deleteObjectByIds() { // may confilct
+	console.log("elements to delete " + activeElements);
 	var text = {
 		ids : activeElements
 	}
-	sendJSONBack("DELETEBYID", text);
+	cleanCanvas();
 	cleanById(activeElements);
 	activeElements = [];
-	elementsToAnimate = [];
+	sendJSONBack("DELETEBYID", text);
 }
 
 function sendJSONBack(type, content) {
@@ -222,7 +221,6 @@ function saveUsername() {
 		var userNode = document.createTextNode(username);
 		document.getElementById("name").appendChild(userNode);
 		document.getElementById("start").style.visibility = "hidden";
-		sendJSONBack("LOGEDIN", null);
 	} else {
 		alert("Nutzernamen eingeben");
 	}

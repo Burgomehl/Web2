@@ -9,28 +9,14 @@
 
 <body>
 
-	<table border="0">
-		<tr>
-			<td></td>
-			<td height="100px"></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td style="min-width: 300px; max-width: 300px; width: 300px;"></td>
-			<td>
-				<canvas id="testcanvas1" width="800" height="800" class="canvas"
-					tabindex='1'>
-                        Dein Browser kann diese Grafik nicht darstellen.
-                </canvas>
-			</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-	</table>
+	<div class="canvasDiv">
+		<canvas id="testcanvas1" class="canvas" width="800" height="800"
+			tabindex='1'>
+   			Dein Browser kann diese Grafik nicht darstellen.
+    	</canvas>
+	</div>
+
+
 	<div id="start" class="start">
 		<div class="normal">
 			<h2>Login</h2>
@@ -70,10 +56,16 @@
 			<div id="deleteObjects" onclick="deleteObjectByIds()">
 				<img src="images/LöscheAusgewählte.png" class="button" />
 			</div>
-			<div onclick="checkAnimate()">
+			<div id="deleteAfter" onclick="cleanAfterId()">
+				<img src="images/LöscheAbwärts.png" class="button" />
+			</div>
+			<div id="deleteBefore" onclick="cleanBeforeId()">
+				<img src="images/LöscheAufwärts.png" class="button" />
+			</div>
+			<div id="StartAnimation" onclick="checkAnimate()">
 				<img src="images/Animate.png" class="button" />
 			</div>
-			<div onclick="stopAnimation()">
+			<div id="StopAnimation" onclick="stopAnimation()">
 				<img src="images/AnimateStop.png" class="button" />
 			</div>
 			<div id="log" class="scroll log" style="margin: 0px; width: 100%;"></div>
@@ -99,7 +91,7 @@
 			<input type="color" value="#ff0000" id="colorChanger" class="button" />
 		</div>
 	</div>
-	<script type="text/javascript" src="painting2.js"></script>
+	<script type="text/javascript" src="painting.js"></script>
 	<script type="text/javascript" src="connecting.js"></script>
 </body>
 

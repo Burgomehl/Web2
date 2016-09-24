@@ -4,19 +4,33 @@
 <title>Web Socket "Hello World"</title>
 
 
-<link rel="stylesheet" type="text/css" href="design2.css"></link>
+<link rel="stylesheet" type="text/css" href="design.css"></link>
 </head>
 
 <body>
 
-	<div class="canvasDiv">
-		<canvas id="testcanvas1" class="canvas" width="800" height="800"
-			tabindex='1'>
-   			Dein Browser kann diese Grafik nicht darstellen.
-    	</canvas>
-	</div>
-
-
+	<table border="0">
+		<tr>
+			<td></td>
+			<td height="100px"></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td style="min-width: 300px; max-width: 300px; width: 300px;"></td>
+			<td>
+				<canvas id="testcanvas1" width="800" height="800" class="canvas"
+					tabindex='1'>
+                        Dein Browser kann diese Grafik nicht darstellen.
+                </canvas>
+			</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</table>
 	<div id="start" class="start">
 		<div class="normal">
 			<h2>Login</h2>
@@ -56,16 +70,10 @@
 			<div id="deleteObjects" onclick="deleteObjectByIds()">
 				<img src="images/LöscheAusgewählte.png" class="button" />
 			</div>
-			<div id="deleteAfter" onclick="cleanAfterId()">
-				<img src="images/LöscheAbwärts.png" class="button" />
-			</div>
-			<div id="deleteBefore" onclick="cleanBeforeId()">
-				<img src="images/LöscheAufwärts.png" class="button" />
-			</div>
-			<div id="StartAnimation" onclick="checkAnimate()">
+			<div onclick="checkAnimate()">
 				<img src="images/Animate.png" class="button" />
 			</div>
-			<div id="StopAnimation" onclick="stopAnimation()">
+			<div onclick="stopAnimation()">
 				<img src="images/AnimateStop.png" class="button" />
 			</div>
 			<div id="log" class="scroll log" style="margin: 0px; width: 100%;"></div>
