@@ -180,7 +180,11 @@ function createHistoryObject(content) {
 		var div = document.createElement("div");
 		div.setAttribute("onclick", "changeAtt(this)");
 		div.setAttribute("id", JSON.stringify(content.id));
-		div.appendChild(document.createTextNode(content.name + ":" + content.type));
+		var text = JSON.stringify(content.content);
+		if(content.type == "SNAKE"){
+			text = "length: "+content.content.aElements.length;
+		}
+		div.appendChild(document.createTextNode(content.name + ": " + content.type + ": "+text));
 		document.getElementById("log").appendChild(div);
 		if(content.animated){
 			console.log("animated "+ document.getElementById("name").textContent+" / "+ content.name);
