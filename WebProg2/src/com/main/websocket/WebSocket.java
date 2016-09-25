@@ -40,7 +40,8 @@ public class WebSocket {
 	private static Set<Session> session = Collections.synchronizedSet(new HashSet<>());
 	private static Robot robo;
 
-	private final static String url = "ws://localhost:8080/WebProg2/websocket/robot"; // "ws://195.37.49.24/sos16_01/websocket/robot";//
+	private final static String url = "ws://localhost:8080/WebProg2/websocket/robot"; 
+//	private final static String url ="ws://195.37.49.24/sos16_01/websocket/robot";
 
 	public WebSocket() {
 		historyHandler = HistoryHandler.getInstance();
