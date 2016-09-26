@@ -16,8 +16,16 @@ webSocket.onmessage = function(event) {
 	onMessage(event)
 };
 
+webSocket.onclose = function(event){
+	onClose(event);
+}
+
+function onClose(event){
+	sendMessageToMessageBox('Connection closed');
+}
+
 function onOpen(event) {
-	sendMessageToMessageBox('Connection established');
+	sendMessageToMessageBox('Connection open');
 }
 
 function onError(event) {
