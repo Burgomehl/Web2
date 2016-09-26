@@ -93,7 +93,7 @@ public class Robot extends Thread {
 					break;
 				case 3:
 					Snake sna = new Snake();
-					int length = r.nextInt(20)+1;
+					int length = r.nextInt(20) + 1;
 					int[] aElements = new int[length];
 					int[] bElements = new int[length];
 					aElements[0] = r.nextInt(posX + sizeA);
@@ -130,7 +130,9 @@ public class Robot extends Thread {
 			}
 
 			try {
-				robotSession.close();
+				if (robotSession != null) {
+					robotSession.close();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -178,6 +180,11 @@ public class Robot extends Thread {
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
 		System.out.println("Robot: Connection closed.");
+		try {
+			robotSession.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		robotSession = null;
 	}
 }
