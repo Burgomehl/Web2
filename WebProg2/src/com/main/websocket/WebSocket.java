@@ -135,7 +135,7 @@ public class WebSocket {
 		sendToAllSessions(m);
 	}
 
-	private void sendToAllSessions(Message m) {
+	private synchronized void sendToAllSessions(Message m) {
 		synchronized (WebSocket.session) {
 			for (Session sessionToSend : WebSocket.session) {
 				sendMessage(m, sessionToSend);
@@ -160,13 +160,14 @@ public class WebSocket {
 	}
 
 	@OnOpen
-	public void onOpen(Session session, EndpointConfig endpointConfig) {
+	public synchronized void onOpen(Session session, EndpointConfig endpointConfig) {
 		System.out.println("Connection opened.");
 		WebSocket.session.add(session);
 		adjustRobot();
 	}
 
 	public synchronized static void adjustRobot() {
+		System.out.println("Sessionsize: "+session.size());
 		if ((session.size() >= 1 && session.size() < 3) && robo == null) {
 			try {
 				robo = new Robot(new URI(url));
@@ -198,7 +199,7 @@ public class WebSocket {
 	}
 
 	@OnClose
-	public void onClose(Session session, CloseReason closeReason) {
+	public synchronized void onClose(Session session, CloseReason closeReason) {
 		System.out.println("Connection closed.");
 		WebSocket.session.remove(session);
 		adjustRobot();

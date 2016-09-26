@@ -24,7 +24,7 @@ function onError(event) {
 	console.log("error: " + event.data);
 }
 
-function cleanAll() { // conflict ?
+function cleanAll() { 
 	cleanCanvas();
 	var myNode = document.getElementById("log");
 	while (myNode.firstChild) {
@@ -122,7 +122,7 @@ function changeAtt(e) {
 	}
 }
 
-function animate() { // conflict ?
+function animate() {
 	function frame() {
 		if (animatedElements.length > 0 && isAnimated) {
 			var text = {
@@ -164,7 +164,7 @@ function checkAnimate(e) { // conflict ?
 	elementsToAnimate = [];
 }
 
-function stopAnimation() { // may conflict
+function stopAnimation() {
 	for (i = 0; i < activeElements.length; ++i) {
 		var ele = document.getElementById(activeElements[i]);
 		ele.setAttribute("class", "history inActive");

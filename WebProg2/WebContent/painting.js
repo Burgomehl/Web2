@@ -1,5 +1,9 @@
 var canvas = document.getElementById('testcanvas1');
-var ctx = canvas.getContext('2d');
+canvas.offscreenCanvas = document.createElement("offscreenCanvas");
+canvas.offscreenCanvas.width = canvas.width;
+canvas.offscreenCanvas.height = canvas.height;
+canvas.offscreenContext = canvas.getContext("2d");
+var ctx = canvas.offscreenContext;
 var color = "#ff0000";
 var xRoute = [], yRoute = [];
 var x, y, a, b, actualPosX, actualPosY, shape, active = false, isPolygonActive = false;
@@ -219,6 +223,7 @@ canvas.onkeyup = function(e) {
 		pol.sendJson();
 		xRoute = [];
 		yRoute = [];
+		render();
 	}
 }
 canvas.onmouseup = function(e) {
@@ -255,6 +260,7 @@ canvas.onmouseup = function(e) {
 		}
 		break;
 	}
+	render();
 }
 
 function drawObject(obj) {
@@ -283,4 +289,10 @@ function drawObject(obj) {
 		pol.draw();
 		break;
 	}
+	render();
+}
+
+function render(){
+//	var image = canvas.offscreenCanvas.getImageData(0,0,canvas.offscreenCanvas.width,canvas.offscreenCanvas.height); 
+//	canvas.getContext("2d").putImageData(image, 0, 0);
 }
