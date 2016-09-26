@@ -160,24 +160,28 @@ public class WebSocket {
 	}
 
 	@OnOpen
-	public synchronized void onOpen(Session session, EndpointConfig endpointConfig) {
-		System.out.println("Connection opened.");
-		WebSocket.session.add(session);
-		adjustRobot();
+	public void onOpen(Session session, EndpointConfig endpointConfig) {
+		synchronized (WebSocket.session) {
+			System.out.println("Connection opened.");
+			WebSocket.session.add(session);
+			adjustRobot();
+		}
 	}
 
-	public synchronized static void adjustRobot() {
-		System.out.println("Sessionsize: "+session.size());
-		if ((session.size() >= 1 && session.size() < 3) && robo == null) {
-			try {
-				robo = new Robot(new URI(url));
-			} catch (URISyntaxException | DeploymentException | IOException e) {
-				e.printStackTrace();
+	public static void adjustRobot() {
+		synchronized (WebSocket.session) {
+			System.out.println("Sessionsize: " + session.size());
+			if ((session.size() >= 1 && session.size() < 3) && robo == null) {
+				try {
+					robo = new Robot(new URI(url));
+				} catch (URISyntaxException | DeploymentException | IOException e) {
+					e.printStackTrace();
+				}
+				robo.start();
+			} else if ((session.size() <= 1 || session.size() > 3) && robo != null) {
+				robo.stopRobot();
+				robo = null;
 			}
-			robo.start();
-		} else if ((session.size() <= 1 || session.size() > 3) && robo != null) {
-			robo.setRobotStop();
-			robo = null;
 		}
 	}
 
@@ -199,9 +203,11 @@ public class WebSocket {
 	}
 
 	@OnClose
-	public synchronized void onClose(Session session, CloseReason closeReason) {
-		System.out.println("Connection closed.");
-		WebSocket.session.remove(session);
-		adjustRobot();
+	public void onClose(Session session, CloseReason closeReason) {
+		synchronized (WebSocket.session) {
+			System.out.println("Connection closed.");
+			WebSocket.session.remove(session);
+			adjustRobot();
+		}
 	}
 }

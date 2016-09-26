@@ -50,10 +50,6 @@ public class Robot extends Thread {
 		historyHandler = HistoryHandler.getInstance();
 	}
 
-	public void setRobotStop() {
-		active = false;
-	}
-
 	@Override
 	public void run() {
 		synchronized (this) {
@@ -140,13 +136,15 @@ public class Robot extends Thread {
 	}
 
 	private void send(Class classes, Object obj, FormType type) {
-		JsonNode readTree;
-		try {
-			readTree = objMapper.readTree(objMapper.writeValueAsString(classes.cast(obj)));
-			Message message = translateToJson(type, readTree);
-			this.robotSession.getAsyncRemote().sendObject(message);
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		if (robotSession != null) {
+			JsonNode readTree;
+			try {
+				readTree = objMapper.readTree(objMapper.writeValueAsString(classes.cast(obj)));
+				Message message = translateToJson(type, readTree);
+				this.robotSession.getAsyncRemote().sendObject(message);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -175,6 +173,19 @@ public class Robot extends Thread {
 		System.out.println("Robot: Connection opened.");
 		robotSession = session;
 		active = true;
+	}
+
+	public void stopRobot() {
+		try {
+			active = false;
+			if (robotSession != null) {
+				robotSession.close();
+				robotSession = null;
+			}
+			// notifyAll();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@OnClose
