@@ -6,6 +6,8 @@ public class FormMessage {
 	private FormType type;
 	private String name;
 	private boolean animated;
+	private int xAnimation;
+	private int yAnimation;
 	private JsonNode content;
 	private long id;
 
@@ -47,6 +49,22 @@ public class FormMessage {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public int getxAnimation() {
+		return xAnimation;
+	}
+
+	public void setxAnimation(int xAnimation) {
+		this.xAnimation = xAnimation;
+	}
+
+	public int getyAnimation() {
+		return yAnimation;
+	}
+
+	public void setyAnimation(int yAnimation) {
+		this.yAnimation = yAnimation;
 	}
 
 }

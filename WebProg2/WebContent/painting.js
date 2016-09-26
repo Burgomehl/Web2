@@ -80,7 +80,7 @@ function Rectangle(x, y, width, height) {
 	this.a = width;
 	this.b = height;
 	this.draw = function() {
-		ctx.strokeRect(this.x, this.y, this.a - this.x, this.b - this.y);
+		ctx.strokeRect(this.x, this.y, this.a, this.b);
 	}
 	this.sendJson = function() {
 		var name = document.getElementById("name").textContent;
@@ -239,7 +239,7 @@ canvas.onmouseup = function(e) {
 		yRoute = [];
 		break;
 	case 1:
-		var rec = new Rectangle(x, y, a, b);
+		var rec = new Rectangle(x, y, a - x, b - y);
 		rec.draw();
 		rec.sendJson();
 		break;
@@ -269,7 +269,7 @@ function drawObject(obj) {
 	ctx.strokeStyle = obj2.color;
 	switch (obj.type) {
 	case "RECTANGLE":
-		var rec = new Rectangle(obj2.a, obj2.b, obj2.x, obj2.y);
+		var rec = new Rectangle(obj2.x, obj2.y, obj2.a, obj2.b);
 		rec.draw();
 		break;
 	case "ELLIPSE":
@@ -292,7 +292,8 @@ function drawObject(obj) {
 	render();
 }
 
-function render(){
-//	var image = canvas.offscreenCanvas.getImageData(0,0,canvas.offscreenCanvas.width,canvas.offscreenCanvas.height); 
-//	canvas.getContext("2d").putImageData(image, 0, 0);
+function render() {
+	// var image =
+	// canvas.offscreenCanvas.getImageData(0,0,canvas.offscreenCanvas.width,canvas.offscreenCanvas.height);
+	// canvas.getContext("2d").putImageData(image, 0, 0);
 }

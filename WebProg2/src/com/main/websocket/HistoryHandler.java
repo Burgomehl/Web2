@@ -37,6 +37,8 @@ public class HistoryHandler {
 	}
 
 	public synchronized void addHistory(FormMessage m) {
+		m.setxAnimation(r.nextInt(10)+1);
+		m.setyAnimation(r.nextInt(10)+1);
 		history.addHistory(m);
 		;
 	}
@@ -68,6 +70,22 @@ public class HistoryHandler {
 		}
 		return nextValue;
 	}
+	
+	private int testNewXPosition(FormMessage form, int newPosition, int size){
+		if(newPosition + size>maxSizeX || newPosition < 0){
+			form.setxAnimation(-form.getxAnimation());
+			return newPosition - 2*form.getxAnimation();
+		}
+		return newPosition;
+	}
+	
+	private int testNewYPosition(FormMessage form, int newPosition, int size){
+		if(newPosition +size>maxSizeY || newPosition < 0){
+			form.setyAnimation(-form.getyAnimation());
+			return newPosition - 2*form.getyAnimation();
+		}
+		return newPosition;
+	}
 
 	public synchronized void animate(DeleteMessage objectsToAnimate) {
 		synchronized (lastAnimatedElements) {
@@ -96,8 +114,8 @@ public class HistoryHandler {
 						Rectangle rec;
 						try {
 							rec = objMapper.readValue(formMessage.getContent(), Rectangle.class);
-							rec.setX(generateNextPosition(rec.getX(), 0));
-							rec.setY(generateNextPosition(rec.getY(), 0));
+							rec.setX(testNewXPosition(formMessage, rec.getX()+formMessage.getxAnimation(),rec.getA()));
+							rec.setY(testNewYPosition(formMessage, rec.getY()+formMessage.getyAnimation(),rec.getB()));
 							JsonNode readTree = objMapper.valueToTree(rec);
 							formMessage.setContent(readTree);
 						} catch (IOException e) {
@@ -108,8 +126,8 @@ public class HistoryHandler {
 						Ellipse ell;
 						try {
 							ell = objMapper.readValue(formMessage.getContent(), Ellipse.class);
-							ell.setX(generateNextPosition(ell.getX(), 0));
-							ell.setY(generateNextPosition(ell.getY(), 0));
+							ell.setX(testNewXPosition(formMessage, ell.getX()+formMessage.getxAnimation(),ell.getA()));
+							ell.setY(testNewYPosition(formMessage, ell.getY()+formMessage.getyAnimation(),ell.getB()));
 							JsonNode readTree = objMapper.valueToTree(ell);
 							formMessage.setContent(readTree);
 						} catch (IOException e) {
@@ -120,10 +138,10 @@ public class HistoryHandler {
 						Line li;
 						try {
 							li = objMapper.readValue(formMessage.getContent(), Line.class);
-							li.setX(generateNextPosition(li.getX(), 0));
-							li.setY(generateNextPosition(li.getY(), 0));
-							li.setA(generateNextPosition(li.getA(), 0));
-							li.setB(generateNextPosition(li.getB(), 0));
+							li.setX(testNewXPosition(formMessage, li.getX()+formMessage.getxAnimation(),0));
+							li.setY(testNewYPosition(formMessage, li.getY()+formMessage.getyAnimation(),0));
+							li.setA(testNewXPosition(formMessage, li.getA()+formMessage.getxAnimation(),0));
+							li.setB(testNewYPosition(formMessage, li.getB()+formMessage.getyAnimation(),0));
 							JsonNode readTree = objMapper.valueToTree(li);
 							formMessage.setContent(readTree);
 						} catch (IOException e) {
@@ -181,8 +199,8 @@ public class HistoryHandler {
 						try {
 							pol = objMapper.readValue(formMessage.getContent(), Polygon.class);
 							for (int i = 0; i < pol.getaElements().length; ++i) {
-								pol.getaElements()[i] = generateNextPosition(pol.getaElements()[i], 0);
-								pol.getbElements()[i] = generateNextPosition(pol.getbElements()[i], 0);
+								pol.getaElements()[i] = testNewXPosition(formMessage, pol.getaElements()[i]+formMessage.getxAnimation(),0);
+								pol.getbElements()[i] = testNewYPosition(formMessage, pol.getbElements()[i]+formMessage.getyAnimation(),0);
 							}
 							JsonNode readTree = objMapper.valueToTree(pol);
 							formMessage.setContent(readTree);
