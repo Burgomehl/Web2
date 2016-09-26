@@ -40,8 +40,9 @@ public class WebSocket {
 	private static Set<Session> session = Collections.synchronizedSet(new HashSet<>());
 	private static Robot robo;
 
-	private final static String url = "ws://localhost:8080/WebProg2/websocket/robot"; 
-//	private final static String url ="ws://195.37.49.24/sos16_01/websocket/robot";
+	private final static String url = "ws://localhost:8080/WebProg2/websocket/robot";
+	// private final static String url
+	// ="ws://195.37.49.24/sos16_01/websocket/robot";
 
 	public WebSocket() {
 		historyHandler = HistoryHandler.getInstance();
@@ -84,7 +85,8 @@ public class WebSocket {
 		case CLEANUP:
 			break;
 		case DELETEAFTER:
-			DeleteAfterBeforeMessage objectsToDeleteAfter = objMapper.readValue(content, DeleteAfterBeforeMessage.class);
+			DeleteAfterBeforeMessage objectsToDeleteAfter = objMapper.readValue(content,
+					DeleteAfterBeforeMessage.class);
 			synchronized (historyHandler.getHistory()) {
 				historyHandler.deleteAfter(objectsToDeleteAfter);
 			}
@@ -92,7 +94,8 @@ public class WebSocket {
 			resendHistory();
 			break;
 		case DELETEBEFORE:
-			DeleteAfterBeforeMessage objectsToDeleteBefore = objMapper.readValue(content, DeleteAfterBeforeMessage.class);
+			DeleteAfterBeforeMessage objectsToDeleteBefore = objMapper.readValue(content,
+					DeleteAfterBeforeMessage.class);
 			synchronized (historyHandler.getHistory()) {
 				historyHandler.deleteBefore(objectsToDeleteBefore);
 			}
@@ -171,11 +174,9 @@ public class WebSocket {
 				e.printStackTrace();
 			}
 			robo.start();
-		} else if ((session.size() < 1 || session.size() > 3) && robo != null) {
-			if (robo != null) {
-				robo.setRobotStop();
-				robo = null;
-			}
+		} else if ((session.size() <= 1 || session.size() > 3) && robo != null) {
+			robo.setRobotStop();
+			robo = null;
 		}
 	}
 
