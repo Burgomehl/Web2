@@ -37,8 +37,8 @@ public class HistoryHandler {
 	}
 
 	public synchronized void addHistory(FormMessage m) {
-		m.setxAnimation(r.nextInt(10)+1);
-		m.setyAnimation(r.nextInt(10)+1);
+		m.setxAnimation(r.nextInt(20)-10);
+		m.setyAnimation(r.nextInt(20)-10);
 		history.addHistory(m);
 		;
 	}
@@ -86,6 +86,13 @@ public class HistoryHandler {
 		}
 		return newPosition;
 	}
+	
+	private int testNextStep(int pos,int move, int size){
+		if(pos+size+move > maxSizeX || pos + move < 0){
+			return -move;
+		}
+		return move;
+	}
 
 	public synchronized void animate(DeleteMessage objectsToAnimate) {
 		synchronized (lastAnimatedElements) {
@@ -114,8 +121,10 @@ public class HistoryHandler {
 						Rectangle rec;
 						try {
 							rec = objMapper.readValue(formMessage.getContent(), Rectangle.class);
-							rec.setX(testNewXPosition(formMessage, rec.getX()+formMessage.getxAnimation(),rec.getA()));
-							rec.setY(testNewYPosition(formMessage, rec.getY()+formMessage.getyAnimation(),rec.getB()));
+							formMessage.setxAnimation(testNextStep(rec.getX(), formMessage.getxAnimation(), rec.getA()));
+							formMessage.setyAnimation(testNextStep(rec.getY(), formMessage.getyAnimation(), rec.getB()));
+							rec.setX(rec.getX()+formMessage.getxAnimation());
+							rec.setY(rec.getY()+formMessage.getyAnimation());
 							JsonNode readTree = objMapper.valueToTree(rec);
 							formMessage.setContent(readTree);
 						} catch (IOException e) {
@@ -126,8 +135,10 @@ public class HistoryHandler {
 						Ellipse ell;
 						try {
 							ell = objMapper.readValue(formMessage.getContent(), Ellipse.class);
-							ell.setX(testNewXPosition(formMessage, ell.getX()+formMessage.getxAnimation(),ell.getA()));
-							ell.setY(testNewYPosition(formMessage, ell.getY()+formMessage.getyAnimation(),ell.getB()));
+							formMessage.setxAnimation(testNextStep(ell.getX(), formMessage.getxAnimation(), ell.getA()));
+							formMessage.setyAnimation(testNextStep(ell.getY(), formMessage.getyAnimation(), ell.getB()));
+							ell.setX(ell.getX()+formMessage.getxAnimation());
+							ell.setY(ell.getY()+formMessage.getyAnimation());
 							JsonNode readTree = objMapper.valueToTree(ell);
 							formMessage.setContent(readTree);
 						} catch (IOException e) {
@@ -138,10 +149,14 @@ public class HistoryHandler {
 						Line li;
 						try {
 							li = objMapper.readValue(formMessage.getContent(), Line.class);
-							li.setX(testNewXPosition(formMessage, li.getX()+formMessage.getxAnimation(),0));
-							li.setY(testNewYPosition(formMessage, li.getY()+formMessage.getyAnimation(),0));
-							li.setA(testNewXPosition(formMessage, li.getA()+formMessage.getxAnimation(),0));
-							li.setB(testNewYPosition(formMessage, li.getB()+formMessage.getyAnimation(),0));
+							formMessage.setxAnimation(testNextStep(li.getX(), formMessage.getxAnimation(), 0));
+							formMessage.setyAnimation(testNextStep(li.getY(), formMessage.getyAnimation(), 0));
+							formMessage.setxAnimation(testNextStep(li.getA(), formMessage.getxAnimation(), 0));
+							formMessage.setyAnimation(testNextStep(li.getB(), formMessage.getyAnimation(), 0));
+							li.setX(li.getX()+formMessage.getxAnimation());
+							li.setY(li.getY()+formMessage.getyAnimation());
+							li.setA(li.getA()+formMessage.getxAnimation());
+							li.setB(li.getB()+formMessage.getyAnimation());
 							JsonNode readTree = objMapper.valueToTree(li);
 							formMessage.setContent(readTree);
 						} catch (IOException e) {
@@ -199,8 +214,10 @@ public class HistoryHandler {
 						try {
 							pol = objMapper.readValue(formMessage.getContent(), Polygon.class);
 							for (int i = 0; i < pol.getaElements().length; ++i) {
-								pol.getaElements()[i] = testNewXPosition(formMessage, pol.getaElements()[i]+formMessage.getxAnimation(),0);
-								pol.getbElements()[i] = testNewYPosition(formMessage, pol.getbElements()[i]+formMessage.getyAnimation(),0);
+								formMessage.setxAnimation(testNextStep(pol.getaElements()[i], formMessage.getxAnimation(), 0));
+								formMessage.setyAnimation(testNextStep(pol.getbElements()[i], formMessage.getyAnimation(), 0));
+								pol.getaElements()[i] =  pol.getaElements()[i]+formMessage.getxAnimation();
+								pol.getbElements()[i] =  pol.getbElements()[i]+formMessage.getyAnimation();
 							}
 							JsonNode readTree = objMapper.valueToTree(pol);
 							formMessage.setContent(readTree);

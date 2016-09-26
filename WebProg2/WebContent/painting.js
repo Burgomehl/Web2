@@ -107,14 +107,14 @@ function Ellipse(x, y, width, height) {
 	this.b = height;
 	this.draw = function() {
 		ctx.beginPath();
-		ctx.arc(this.x, this.y, Math.sqrt((this.x - this.a) * (this.x - this.a)
-				+ (this.y - this.b) * (this.y - this.b)), 0, 2 * Math.PI, true);
+		ctx.arc(this.x, this.y, Math.sqrt((this.a) * (this.a)
+				+ (this.b) * (this.b)), 0, 2 * Math.PI, true);
 		ctx.stroke();
 	}
 	this.sendJson = function() {
 		var name = document.getElementById("name").textContent;
-		var rad = Math.sqrt((this.x - this.a) * (this.x - this.a)
-				+ (this.y - this.b) * (this.y - this.b));
+		var rad = Math.sqrt((this.a) * (this.a)
+				+ (this.b) * (this.b));
 		var content = {
 			type : "ELLIPSE",
 			name : name,
@@ -244,7 +244,7 @@ canvas.onmouseup = function(e) {
 		rec.sendJson();
 		break;
 	case 2:
-		var ell = new Ellipse(x, y, a, b);
+		var ell = new Ellipse(x, y, a - x, b - y);
 		ell.draw();
 		ell.sendJson();
 		break;
