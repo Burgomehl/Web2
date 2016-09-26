@@ -75,11 +75,10 @@ public class HistoryHandler {
 				lastAnimatedElements.removeAll(objectsToAnimate.getIds());
 				for (String id : lastAnimatedElements) {
 					synchronized (history.getHistory()) {
-						List<FormMessage> collect = history.getHistory().parallelStream()
-								.filter(e -> e.getId() == Long.valueOf(id)).collect(Collectors.toList());
-						for (FormMessage formMessage : collect) {
-							formMessage.setAnimated(false);
-						}
+						history.getHistory()
+								.stream()
+								.filter(e -> e.getId() == Long.valueOf(id))
+								.forEach(formMessage -> formMessage.setAnimated(false));
 					}
 				}
 			}
