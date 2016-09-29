@@ -79,7 +79,7 @@ public class Service {
 					String color = rec.getColor();
 					graphic.setColor(hex2Rgb(color));
 					
-					graphic.drawRect(rec.getA(), rec.getB(), rec.getX(), rec.getY());
+					graphic.drawRect(rec.getX(), rec.getY(), rec.getA(), rec.getB());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

@@ -176,20 +176,13 @@ public class Robot extends Thread {
 	}
 
 	public void stopRobot() {
-		try {
-			active = false;
-			if (robotSession != null) {
-				robotSession.close();
-				robotSession = null;
-			}
-			// notifyAll();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		active = false;
+		robotSession = null;
 	}
 
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
+		stopRobot();
 		System.out.println("Robot: Connection closed.");
 		try {
 			robotSession.close();

@@ -140,8 +140,6 @@ function animate() {
 			sendJSONBack("ANIMATE", text);
 			animatedFrameContext = window.requestAnimationFrame(frame);
 		} else {
-			console.log("darf ich hier beenden ? " + isAnimated + " "
-					+ animatedElements.length);
 			isAnimated = false;
 			window.cancelAnimationFrame(animatedFrameContext);
 		}

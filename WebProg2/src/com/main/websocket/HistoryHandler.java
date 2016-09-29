@@ -25,7 +25,7 @@ public class HistoryHandler {
 	private ObjectMapper objMapper = new ObjectMapper();
 	private Random r = new Random();
 	private int maxSizeX = 800;
-	private int maxSizeY = 800;
+//	private int maxSizeY = 800;
 	public static List<String> lastAnimatedElements = new ArrayList<>();
 
 	private HistoryHandler() {
@@ -58,34 +58,6 @@ public class HistoryHandler {
 	public synchronized long getCurrentId() {
 		return history.getCurrentId();
 	}
-
-	private int generateNextPosition(int lastValue, int xyPosition) {
-		int nextValue = lastValue + r.nextInt(21) - 10;
-		while ((nextValue + xyPosition) > maxSizeX || (nextValue + xyPosition) < 0) {
-			if (xyPosition == 0) {
-				nextValue = lastValue + r.nextInt(20) - 10;
-			} else {
-				nextValue = lastValue + r.nextInt(Math.abs(xyPosition) % 20) - (Math.abs(xyPosition) / 2) % 10;
-			}
-		}
-		return nextValue;
-	}
-	
-	private int testNewXPosition(FormMessage form, int newPosition, int size){
-		if(newPosition + size>maxSizeX || newPosition < 0){
-			form.setxAnimation(-form.getxAnimation());
-			return newPosition - 2*form.getxAnimation();
-		}
-		return newPosition;
-	}
-	
-	private int testNewYPosition(FormMessage form, int newPosition, int size){
-		if(newPosition +size>maxSizeY || newPosition < 0){
-			form.setyAnimation(-form.getyAnimation());
-			return newPosition - 2*form.getyAnimation();
-		}
-		return newPosition;
-	}
 	
 	private int testNextStep(int pos,int move, int size){
 		if(pos+size+move > maxSizeX || pos + move < 0){
@@ -103,21 +75,6 @@ public class HistoryHandler {
 	}
 
 	public synchronized void animate(DeleteMessage objectsToAnimate) {
-//		synchronized (lastAnimatedElements) {
-//			if (!lastAnimatedElements.isEmpty() || !lastAnimatedElements.containsAll(objectsToAnimate.getIds())) {
-//				lastAnimatedElements.removeAll(objectsToAnimate.getIds());
-//				for (String id : lastAnimatedElements) {
-//					synchronized (history.getHistory()) {
-//						history.getHistory()
-//								.stream()
-//								.filter(e -> e.getId() == Long.valueOf(id))
-//								.forEach(formMessage -> formMessage.setAnimated(false));
-//					}
-//				}
-//			}
-//			lastAnimatedElements = objectsToAnimate.getIds();
-//		}
-
 		for (String id : objectsToAnimate.getIds()) {
 			synchronized (history.getHistory()) {
 				List<FormMessage> collect = history.getHistory().parallelStream()
