@@ -93,22 +93,30 @@ public class HistoryHandler {
 		}
 		return move;
 	}
+	
+	public synchronized void unFlagAnimmatedHistoryObjects(DeleteMessage objectsToUnflag){
+		for (String id : objectsToUnflag.getIds()) {
+			history.getHistory().parallelStream()
+					.filter(e -> e.getId() == Long.valueOf(id))
+					.forEach(e-> e.setAnimated(false));
+		}
+	}
 
 	public synchronized void animate(DeleteMessage objectsToAnimate) {
-		synchronized (lastAnimatedElements) {
-			if (!lastAnimatedElements.isEmpty() || !lastAnimatedElements.containsAll(objectsToAnimate.getIds())) {
-				lastAnimatedElements.removeAll(objectsToAnimate.getIds());
-				for (String id : lastAnimatedElements) {
-					synchronized (history.getHistory()) {
-						history.getHistory()
-								.stream()
-								.filter(e -> e.getId() == Long.valueOf(id))
-								.forEach(formMessage -> formMessage.setAnimated(false));
-					}
-				}
-			}
-			lastAnimatedElements = objectsToAnimate.getIds();
-		}
+//		synchronized (lastAnimatedElements) {
+//			if (!lastAnimatedElements.isEmpty() || !lastAnimatedElements.containsAll(objectsToAnimate.getIds())) {
+//				lastAnimatedElements.removeAll(objectsToAnimate.getIds());
+//				for (String id : lastAnimatedElements) {
+//					synchronized (history.getHistory()) {
+//						history.getHistory()
+//								.stream()
+//								.filter(e -> e.getId() == Long.valueOf(id))
+//								.forEach(formMessage -> formMessage.setAnimated(false));
+//					}
+//				}
+//			}
+//			lastAnimatedElements = objectsToAnimate.getIds();
+//		}
 
 		for (String id : objectsToAnimate.getIds()) {
 			synchronized (history.getHistory()) {

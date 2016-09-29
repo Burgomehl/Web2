@@ -16,11 +16,11 @@ webSocket.onmessage = function(event) {
 	onMessage(event)
 };
 
-webSocket.onclose = function(event){
+webSocket.onclose = function(event) {
 	onClose(event);
 }
 
-function onClose(event){
+function onClose(event) {
 	sendMessageToMessageBox('Connection closed');
 }
 
@@ -32,7 +32,7 @@ function onError(event) {
 	console.log("error: " + event.data);
 }
 
-function cleanAll() { 
+function cleanAll() {
 	cleanCanvas();
 	var myNode = document.getElementById("log");
 	while (myNode.firstChild) {
@@ -150,17 +150,17 @@ function animate() {
 }
 
 function checkAnimate(e) { // conflict ?
-	console.log("try to animated this objects "+ elementsToAnimate);
+	console.log("try to animated this objects " + elementsToAnimate);
 	elementsToAnimate = elementsToAnimate.filter(function(x) {
 		return animatedElements.indexOf(x) < 0
 	})
-	console.log("elments left "+ elementsToAnimate);
+	console.log("elments left " + elementsToAnimate);
 	for (i = 0; i < elementsToAnimate.length; ++i) {
 		var ele = document.getElementById(elementsToAnimate[i]);
 		if (ele != null) {
 			ele.setAttribute("class", "history animated");
 		}
-		console.log("push element to animated "+ elementsToAnimate[i]);
+		console.log("push element to animated " + elementsToAnimate[i]);
 		animatedElements.push(elementsToAnimate[i]);
 	}
 	if (!isAnimated) {
@@ -179,6 +179,10 @@ function stopAnimation() {
 		var index = animatedElements.indexOf(activeElements[i]);
 		animatedElements.splice(index, 1);
 	}
+	var text = {
+		ids : activeElements
+	}
+	sendJSONBack("REMOVEANIMTEDFLAG", text);
 	elementsToAnimate = [];
 	activeElements = [];
 }
@@ -189,20 +193,23 @@ function createHistoryObject(content) {
 		div.setAttribute("onclick", "changeAtt(this)");
 		div.setAttribute("id", JSON.stringify(content.id));
 		var text = JSON.stringify(content.content);
-		if(content.type == "SNAKE"){
-			text = "length: "+content.content.aElements.length;
+		if (content.type == "SNAKE") {
+			text = "length: " + content.content.aElements.length;
 		}
-		div.appendChild(document.createTextNode(content.name + ": " + content.type + ": "+text));
+		div.appendChild(document.createTextNode(content.name + ": "
+				+ content.type + ": " + text));
 		document.getElementById("log").appendChild(div);
-		if(content.animated){
-			console.log("animated "+ document.getElementById("name").textContent+" / "+ content.name);
+		if (content.animated) {
+			console.log("animated "
+					+ document.getElementById("name").textContent + " / "
+					+ content.name);
 			div.setAttribute("class", "history inActive animated");
 			if (document.getElementById("name").textContent == content.name) {
-				console.log("go animation "+ JSON.stringify(content.id));
+				console.log("go animation " + JSON.stringify(content.id));
 				elementsToAnimate.push(JSON.stringify(content.id));
 				checkAnimate();
 			}
-		}else {
+		} else {
 			div.setAttribute("class", "history inActive");
 		}
 	}

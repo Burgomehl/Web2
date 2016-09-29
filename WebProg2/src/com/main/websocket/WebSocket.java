@@ -107,6 +107,12 @@ public class WebSocket {
 				resendHistory();
 			}
 			break;
+		case REMOVEANIMTEDFLAG:
+			DeleteMessage objectsToUnflag = objMapper.readValue(content, DeleteMessage.class);
+			synchronized (historyHandler.getHistory()) {
+				historyHandler.unFlagAnimmatedHistoryObjects(objectsToUnflag);
+			}
+			break;
 		default:
 			break;
 		}

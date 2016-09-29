@@ -10,5 +10,6 @@ public enum Type {
 	CLEANUP,//
 	ANIMATE,//
 	CLEANCANVAS,//
-	LOGEDIN
+	LOGEDIN,//
+	REMOVEANIMTEDFLAG
 }
